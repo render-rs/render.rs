@@ -13,6 +13,8 @@ The `Renderable` trait contains a simple function that returns `String`. This is
 ## Usage
 
 ```rust
+#![feature(proc_macro_hygiene)]
+
 // A simple HTML 5 doctype declaration
 use render::html::HTML5Doctype;
 use render::{

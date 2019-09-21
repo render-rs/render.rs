@@ -13,7 +13,7 @@ licesne = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-render_macros = { path = "../render_macros" }
+render_macros = { path = "../render_macros", version = "0.1" }
 
 [dev-dependencies]
 pretty_assertions = "0.6"

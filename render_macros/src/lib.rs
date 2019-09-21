@@ -1,4 +1,4 @@
-#![feature(proc_macro_diagnostic, proc_macro_hygiene)]
+#![feature(proc_macro_diagnostic)]
 
 extern crate proc_macro;
 
