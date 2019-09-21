@@ -1,0 +1,11 @@
+[package]
+name = "render_tests"
+version = "0.1.0"
+authors = ["Gal Schlezinger <gal@spitfire.co.il>"]
+edition = "2018"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+render = { path = "../render" }

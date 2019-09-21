@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "render",
+    "render_macros",
+    "render_tests",
+]
