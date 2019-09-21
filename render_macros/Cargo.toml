@@ -1,6 +1,6 @@
 [package]
 name = "render_macros"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Gal Schlezinger <gal@spitfire.co.il>"]
 edition = "2018"
 description = "The macros needed for `render`"
