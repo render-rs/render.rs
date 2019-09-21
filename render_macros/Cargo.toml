@@ -8,7 +8,7 @@ readme = "../README.md"
 repository = "https://github.com/Schniz/render.rs"
 keywords = ["macro"]
 categories = []
-licesne = "MIT"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
