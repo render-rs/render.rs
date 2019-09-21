@@ -1,3 +1,5 @@
+//! HTML utilities
+
 use crate::Renderable;
 
 /// HTML 5 doctype declaration

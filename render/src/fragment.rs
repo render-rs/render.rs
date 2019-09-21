@@ -1,3 +1,5 @@
+//! The fragment component
+
 use crate::Renderable;
 
 /// A top-level root component to combine a same-level components
