@@ -1,7 +1,7 @@
 #![feature(proc_macro_hygiene)]
 
 use render::html::HTML5Doctype;
-use render::{html, rsx, Renderable, Fragment};
+use render::{html, rsx, Fragment, Renderable};
 
 #[derive(Debug)]
 struct Hello<'a, T: Renderable> {

@@ -9,3 +9,7 @@ publish = false
 
 [dependencies]
 render = { path = "../render" }
+
+[dev-dependencies]
+pretty_assertions = "0.6"
+

@@ -4,6 +4,7 @@ use crate::Renderable;
 ///
 /// ```rust
 /// # #![feature(proc_macro_hygiene)]
+/// # use pretty_assertions::assert_eq;
 /// # use render::html::HTML5Doctype;
 /// # use render::html;
 /// # use render::fragment::Fragment;
