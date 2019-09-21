@@ -58,6 +58,19 @@
 //!       </Page>
 //!     }
 //! }
+//!
+//! # use pretty_assertions::assert_eq;
+//! # let actual = some_page("Gal");
+//! # let expected = concat!(
+//! #     "<!DOCTYPE html>",
+//! #     "<html>",
+//! #     "<head><title>Home</title></head>",
+//! #     "<body>",
+//! #     "Welcome, Gal",
+//! #     "</body>",
+//! #     "</html>"
+//! # );
+//! # assert_eq!(actual, expected);
 //! ```
 
 pub mod fragment;
