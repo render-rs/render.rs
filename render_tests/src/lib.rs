@@ -44,3 +44,15 @@ pub fn it_works() -> String {
 pub fn verify_works() {
     println!("{}", it_works());
 }
+
+#[test]
+pub fn works_with_raw() {
+    use pretty_assertions::assert_eq;
+    use render::raw;
+
+    let actual = html! {
+        <div>{raw!("<Hello />")}</div>
+    };
+
+    assert_eq!(actual, "<div><Hello /></div>");
+}
