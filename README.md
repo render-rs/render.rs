@@ -1,6 +1,6 @@
 # Render
 
-> A simple template engine with the type-safety of Rust and the ergonomics of JSX
+> 🔏 A safe and simple template engine with the ergonomics of JSX
 
 The `Renderable` trait contains a simple function that returns `String`. This is very handy for type-safe HTML templates, but can also work for writing tree-like terminal coloring mechanism like ReasonML's [Pastel](https://reason-native.com/docs/pastel/).
 
