@@ -31,8 +31,8 @@ pub fn it_works() -> String {
     let value = html! {
         <>
             <HTML5Doctype />
-            <Hello world yes={1 + 1}>
-                <div>{format!("HEY!")}</div>
+            <Hello hello-world yes={1 + 1}>
+                <div hello={"hello"}>{format!("HEY!")}</div>
                 {other_value}
             </Hello>
         </>

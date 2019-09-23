@@ -3,6 +3,7 @@ use crate::element_attribute::ElementAttribute;
 use quote::{quote, ToTokens};
 use std::collections::HashSet;
 use syn::parse::{Parse, ParseStream, Result};
+use syn::spanned::Spanned;
 
 pub type Attributes = HashSet<ElementAttribute>;
 
@@ -37,17 +38,13 @@ impl Parse for ElementAttributes {
         let mut attributes: HashSet<ElementAttribute> = HashSet::new();
         while input.peek(syn::Ident) {
             if let Ok(attribute) = input.parse::<ElementAttribute>() {
+                let ident = attribute.ident();
                 if attributes.contains(&attribute) {
                     let error_message = format!(
                         "There is a previous definition of the {} attribute",
-                        attribute.ident()
+                        quote!(#ident)
                     );
-                    attribute
-                        .ident()
-                        .span()
-                        .unwrap()
-                        .warning(error_message)
-                        .emit();
+                    ident.span().unwrap().warning(error_message).emit();
                 }
                 attributes.insert(attribute);
             }
@@ -106,11 +103,15 @@ impl<'a> ToTokens for SimpleElementAttributes<'a> {
                 .attributes
                 .iter()
                 .map(|attribute| {
-                    let ident = attribute.ident();
+                    let mut iter = attribute.ident().iter();
+                    let first_word = iter.next().unwrap();
+                    let ident = iter.fold(first_word.to_string(), |acc, curr| {
+                        format!("{}-{}", acc, curr)
+                    });
                     let value = attribute.value_tokens();
 
                     quote! {
-                        hm.insert(stringify!(#ident), #value);
+                        hm.insert(#ident, #value);
                     }
                 })
                 .collect();
