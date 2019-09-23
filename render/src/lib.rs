@@ -2,13 +2,13 @@
 //!
 //! The `Renderable` trait contains a simple function that returns `String`. This is very handy for type-safe HTML templates, but can also work for writing tree-like terminal coloring mechanism like ReasonML's [Pastel](https://reason-native.com/docs/pastel/).
 //!
-//! ## Why this is different from `typed-html`?
+//! # Why this is different from `typed-html`?
 //!
 //! `typed-html` is a wonderful library. Unfortunately, it focused its power in strictness of the HTML spec itself, and doesn't allow arbitrary compositions of custom elements.
 //!
 //! `render` takes a different approach. For now, HTML is not typed at all. It can get any key and get any string value. The main focus is custom components, so you can create a composable and declarative template with no runtime errors.
 //!
-//! ## Usage
+//! # Usage
 //!
 //! ```rust
 //! #![feature(proc_macro_hygiene)]

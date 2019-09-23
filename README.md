@@ -1,4 +1,4 @@
-# Render
+# render
 
 > 🔏 A safe and simple template engine with the ergonomics of JSX
 
@@ -18,6 +18,8 @@ The `Renderable` trait contains a simple function that returns `String`. This is
 // A simple HTML 5 doctype declaration
 use render::html::HTML5Doctype;
 use render::{
+    // A macro to create components
+    component,
     // A macro to compose components in JSX fashion
     html,
     // A component that just render its children
@@ -27,28 +29,19 @@ use render::{
 };
 
 // This can be any layout we want
-#[derive(Debug)]
-struct Page<'a, T: Renderable> {
-    title: &'a str,
-    children: T,
-}
-
-// Implementing `Renderable` gives the ability to compose
-// components
-impl<'a, T: Renderable> Renderable for Page<'a, T> {
-    fn render(self) -> String {
-        html! {
-          <Fragment>
-            <HTML5Doctype />
-            <html>
-              <head><title>{self.title}</title></head>
-              <body>
-                {self.children}
-              </body>
-            </html>
-          </Fragment>
-        }
-    }
+#[component]
+fn Page<'a, Children: Renderable>(title: &'a str, children: Children) -> String {
+   html! {
+     <Fragment>
+       <HTML5Doctype />
+       <html>
+         <head><title>{title}</title></head>
+         <body>
+           {children}
+         </body>
+       </html>
+     </Fragment>
+   }
 }
 
 // This can be a route in Rocket, the web framework,
@@ -60,4 +53,7 @@ pub fn some_page(user_name: &str) -> String {
       </Page>
     }
 }
+
 ```
+
+License: MIT
