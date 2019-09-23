@@ -1,6 +1,16 @@
 //! > 🔏 A safe and simple template engine with the ergonomics of JSX
+//! 
+//! `render` itself is a combination of traits, structs and macros that together unify and
+//! boost the experience of composing tree-shaped data structures. This works best with HTML and
+//! XML rendering, but can work with other usages as well, like ReasonML's [`Pastel`](https://reason-native.com/docs/pastel/) library for terminal colors.
 //!
-//! The `Renderable` trait contains a simple function that returns `String`. This is very handy for type-safe HTML templates, but can also work for writing tree-like terminal coloring mechanism like ReasonML's [Pastel](https://reason-native.com/docs/pastel/).
+//! # How?
+//!
+//! A renderable component is a struct that implements [`Renderable`](./trait.Renderable.html). There
+//! are multiple macros that provide a better experience implementing Renderable:
+//!
+//! * [`html!`](../render_macros/macro.html.html) for the JSX ergonomics
+//! * [`#[component]`](../render_macros/attr.component.html) for the syntactic-sugar of function components
 //!
 //! # Why this is different from `typed-html`?
 //!

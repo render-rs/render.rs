@@ -7,6 +7,7 @@ mod children;
 mod element;
 mod element_attribute;
 mod element_attributes;
+mod function_component;
 mod tags;
 
 use element::Element;
@@ -94,83 +95,56 @@ pub fn rsx(input: TokenStream) -> TokenStream {
     TokenStream::from(result)
 }
 
+/// A syntactic sugar for implementing [`Renderable`](../render/trait.Renderable.html) conveniently
+/// using functions.
+///
+/// This attribute should be above a stand-alone function definition that returns a
+/// [`String`](std::string::String):
+///
 /// ```rust
 /// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::{component, html};
-/// # use pretty_assertions::assert_eq;
-///
+/// #
 /// #[component]
-/// fn User(name: String) -> String {
+/// fn UserFn(name: String) -> String {
 ///     html! { <div>{format!("Hello, {}", name)}</div> }
 /// }
+/// ```
 ///
-/// /// #[derive(Debug)]
-/// /// struct User { name: String };
-/// ///
-/// /// impl Renderable for User {
-/// ///     fn render(self) -> String {
-/// ///         let User { name } = self;
-/// ///         html! { <div>{format!("Hello, {}", name)}</div> }
-/// ///     }
-/// /// }
+/// Practically, this is exactly the same as using the [Renderable](../render/trait.Renderable.html) trait:
 ///
-/// let rendered = html! {
-///     <User name={String::from("Schniz")} />
-/// };
+/// ```rust
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::{component, html};
+/// # use render::Renderable;
+/// # use pretty_assertions::assert_eq;
+/// #
+/// #[derive(Debug)]
+/// struct User { name: String }
 ///
-/// assert_eq!(rendered, r#"<div>Hello, Schniz</div>"#);
+/// impl render::Renderable for User {
+///     fn render(self) -> String {
+///         html! { <div>{format!("Hello, {}", self.name)}</div> }
+///     }
+/// }
+///
+/// # #[component]
+/// # fn UserFn(name: String) -> String {
+/// #     html! { <div>{format!("Hello, {}", name)}</div> }
+/// # }
+/// #
+/// # let from_fn = html! {
+/// #     <UserFn name={String::from("Schniz")} />
+/// # };
+/// #
+/// # let from_struct = html! {
+/// #     <User name={String::from("Schniz")} />
+/// # };
+/// #
+/// # assert_eq!(from_fn, from_struct);
 /// ```
 #[proc_macro_attribute]
 pub fn component(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    let syn::ItemFn {
-        attrs: _attrs,
-        vis,
-        sig,
-        block,
-    } = parse_macro_input!(item as syn::ItemFn);
-
-    let struct_name = sig.ident;
-    let (impl_generics, ty_generics, where_clause) = sig.generics.split_for_impl();
-    let inputs = sig.inputs;
-
-    let inputs_block = if inputs.len() > 0 {
-        quote!({ #inputs })
-    } else {
-        quote!(;)
-    };
-
-    let inputs_reading = if inputs.len() == 0 {
-        quote!()
-    } else {
-        let input_names: Vec<_> = inputs
-            .iter()
-            .filter_map(|argument| match argument {
-                syn::FnArg::Typed(typed) => Some(typed),
-                syn::FnArg::Receiver(rec) => {
-                    use syn::spanned::Spanned;
-                    rec.span().unwrap().error("Don't use `self` on components");
-                    None
-                }
-            })
-            .map(|value| {
-                let pat = &value.pat;
-                quote!(#pat)
-            })
-            .collect();
-        quote!(
-            let #struct_name { #(#input_names),* } = self;
-        )
-    };
-
-    TokenStream::from(quote! {
-        #[derive(Debug)]
-        #vis struct #struct_name#impl_generics #inputs_block
-
-        impl#impl_generics ::render::Renderable for #struct_name #ty_generics #where_clause {
-            fn render(self) -> String {
-                #inputs_reading
-                #block
-            }
-        }
-    })
+    let f = parse_macro_input!(item as syn::ItemFn);
+    function_component::to_component(f)
 }
