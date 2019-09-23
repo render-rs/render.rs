@@ -32,8 +32,6 @@ use render::{
     component,
     // A macro to compose components in JSX fashion
     html,
-    // A component that just render its children
-    Fragment,
     // A trait for custom components
     Renderable,
 };
@@ -42,7 +40,7 @@ use render::{
 #[component]
 fn Page<'a, Children: Renderable>(title: &'a str, children: Children) -> String {
    html! {
-     <Fragment>
+     <>
        <HTML5Doctype />
        <html>
          <head><title>{title}</title></head>
@@ -50,7 +48,7 @@ fn Page<'a, Children: Renderable>(title: &'a str, children: Children) -> String 
            {children}
          </body>
        </html>
-     </Fragment>
+     </>
    }
 }
 
