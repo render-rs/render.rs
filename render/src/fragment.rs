@@ -10,12 +10,11 @@ use crate::Renderable;
 /// # use pretty_assertions::assert_eq;
 /// # use render::html::HTML5Doctype;
 /// # use render_macros::html;
-/// # use render::fragment::Fragment;
 /// let result = html! {
-///     <Fragment>
+///     <>
 ///         <a />
 ///         <b />
-///     </Fragment>
+///     </>
 /// };
 /// assert_eq!(result, "<a /><b />");
 /// ```

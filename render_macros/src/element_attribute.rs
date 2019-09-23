@@ -1,4 +1,5 @@
 use quote::quote;
+use std::hash::{Hash, Hasher};
 use syn::parse::{Parse, ParseStream, Result};
 
 pub enum ElementAttribute {
@@ -29,9 +30,9 @@ impl PartialEq for ElementAttribute {
 
 impl Eq for ElementAttribute {}
 
-impl std::hash::Hash for ElementAttribute {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        std::hash::Hash::hash(self.ident(), state)
+impl Hash for ElementAttribute {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        Hash::hash(self.ident(), state)
     }
 }
 
