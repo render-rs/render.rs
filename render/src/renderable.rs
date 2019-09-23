@@ -88,3 +88,9 @@ impl<O: Renderable, E: Renderable> Renderable for Result<O, E> {
         }
     }
 }
+
+impl Renderable for usize {
+    fn render(self) -> String {
+        self.to_string()
+    }
+}

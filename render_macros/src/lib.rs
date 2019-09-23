@@ -7,6 +7,7 @@ mod children;
 mod element;
 mod element_attribute;
 mod element_attributes;
+mod function_component;
 mod tags;
 
 use element::Element;
@@ -92,4 +93,58 @@ pub fn rsx(input: TokenStream) -> TokenStream {
     let el = parse_macro_input!(input as Element);
     let result = quote! { #el };
     TokenStream::from(result)
+}
+
+/// A syntactic sugar for implementing [`Renderable`](../render/trait.Renderable.html) conveniently
+/// using functions.
+///
+/// This attribute should be above a stand-alone function definition that returns a
+/// [`String`](std::string::String):
+///
+/// ```rust
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::{component, html};
+/// #
+/// #[component]
+/// fn UserFn(name: String) -> String {
+///     html! { <div>{format!("Hello, {}", name)}</div> }
+/// }
+/// ```
+///
+/// Practically, this is exactly the same as using the [Renderable](../render/trait.Renderable.html) trait:
+///
+/// ```rust
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::{component, html};
+/// # use render::Renderable;
+/// # use pretty_assertions::assert_eq;
+/// #
+/// #[derive(Debug)]
+/// struct User { name: String }
+///
+/// impl render::Renderable for User {
+///     fn render(self) -> String {
+///         html! { <div>{format!("Hello, {}", self.name)}</div> }
+///     }
+/// }
+///
+/// # #[component]
+/// # fn UserFn(name: String) -> String {
+/// #     html! { <div>{format!("Hello, {}", name)}</div> }
+/// # }
+/// #
+/// # let from_fn = html! {
+/// #     <UserFn name={String::from("Schniz")} />
+/// # };
+/// #
+/// # let from_struct = html! {
+/// #     <User name={String::from("Schniz")} />
+/// # };
+/// #
+/// # assert_eq!(from_fn, from_struct);
+/// ```
+#[proc_macro_attribute]
+pub fn component(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let f = parse_macro_input!(item as syn::ItemFn);
+    function_component::to_component(f)
 }

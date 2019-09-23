@@ -1,7 +1,7 @@
 #![feature(proc_macro_hygiene)]
 
 use render::html::HTML5Doctype;
-use render::{html, rsx, Fragment, Renderable};
+use render::{component, html, rsx, Fragment, Renderable};
 
 #[derive(Debug)]
 struct Hello<'a, T: Renderable> {
@@ -38,6 +38,25 @@ pub fn it_works() -> String {
         </Fragment>
     };
     value
+}
+
+#[component]
+pub fn Layout<'a, Children: Renderable>(title: &'a str, children: Children) -> String {
+    html! {
+        <html>
+            <head><title>{title}</title></head>
+            <body>
+                {children}
+            </body>
+        </html>
+    }
+}
+
+#[component]
+pub fn SomeComponent(name: String) -> String {
+    html! {
+        <div>{format!("Hello, {}", name)}</div>
+    }
 }
 
 #[test]
