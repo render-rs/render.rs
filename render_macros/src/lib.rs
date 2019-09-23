@@ -93,3 +93,84 @@ pub fn rsx(input: TokenStream) -> TokenStream {
     let result = quote! { #el };
     TokenStream::from(result)
 }
+
+/// ```rust
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::{component, html};
+/// # use pretty_assertions::assert_eq;
+///
+/// #[component]
+/// fn User(name: String) -> String {
+///     html! { <div>{format!("Hello, {}", name)}</div> }
+/// }
+///
+/// /// #[derive(Debug)]
+/// /// struct User { name: String };
+/// ///
+/// /// impl Renderable for User {
+/// ///     fn render(self) -> String {
+/// ///         let User { name } = self;
+/// ///         html! { <div>{format!("Hello, {}", name)}</div> }
+/// ///     }
+/// /// }
+///
+/// let rendered = html! {
+///     <User name={String::from("Schniz")} />
+/// };
+///
+/// assert_eq!(rendered, r#"<div>Hello, Schniz</div>"#);
+/// ```
+#[proc_macro_attribute]
+pub fn component(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let syn::ItemFn {
+        attrs: _attrs,
+        vis,
+        sig,
+        block,
+    } = parse_macro_input!(item as syn::ItemFn);
+
+    let struct_name = sig.ident;
+    let (impl_generics, ty_generics, where_clause) = sig.generics.split_for_impl();
+    let inputs = sig.inputs;
+
+    let inputs_block = if inputs.len() > 0 {
+        quote!({ #inputs })
+    } else {
+        quote!(;)
+    };
+
+    let inputs_reading = if inputs.len() == 0 {
+        quote!()
+    } else {
+        let input_names: Vec<_> = inputs
+            .iter()
+            .filter_map(|argument| match argument {
+                syn::FnArg::Typed(typed) => Some(typed),
+                syn::FnArg::Receiver(rec) => {
+                    use syn::spanned::Spanned;
+                    rec.span().unwrap().error("Don't use `self` on components");
+                    None
+                }
+            })
+            .map(|value| {
+                let pat = &value.pat;
+                quote!(#pat)
+            })
+            .collect();
+        quote!(
+            let #struct_name { #(#input_names),* } = self;
+        )
+    };
+
+    TokenStream::from(quote! {
+        #[derive(Debug)]
+        #vis struct #struct_name#impl_generics #inputs_block
+
+        impl#impl_generics ::render::Renderable for #struct_name #ty_generics #where_clause {
+            fn render(self) -> String {
+                #inputs_reading
+                #block
+            }
+        }
+    })
+}

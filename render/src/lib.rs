@@ -16,6 +16,8 @@
 //! // A simple HTML 5 doctype declaration
 //! use render::html::HTML5Doctype;
 //! use render::{
+//!     // A macro to create components
+//!     component,
 //!     // A macro to compose components in JSX fashion
 //!     html,
 //!     // A component that just render its children
@@ -25,28 +27,19 @@
 //! };
 //!
 //! // This can be any layout we want
-//! #[derive(Debug)]
-//! struct Page<'a, T: Renderable> {
-//!     title: &'a str,
-//!     children: T,
-//! }
-//!
-//! // Implementing `Renderable` gives the ability to compose
-//! // components
-//! impl<'a, T: Renderable> Renderable for Page<'a, T> {
-//!     fn render(self) -> String {
-//!         html! {
-//!           <Fragment>
-//!             <HTML5Doctype />
-//!             <html>
-//!               <head><title>{self.title}</title></head>
-//!               <body>
-//!                 {self.children}
-//!               </body>
-//!             </html>
-//!           </Fragment>
-//!         }
-//!     }
+//! #[component]
+//! fn Page<'a, Children: Renderable>(title: &'a str, children: Children) -> String {
+//!    html! {
+//!      <Fragment>
+//!        <HTML5Doctype />
+//!        <html>
+//!          <head><title>{title}</title></head>
+//!          <body>
+//!            {children}
+//!          </body>
+//!        </html>
+//!      </Fragment>
+//!    }
 //! }
 //!
 //! // This can be a route in Rocket, the web framework,
@@ -80,7 +73,7 @@ mod simple_element;
 mod text_element;
 
 pub use fragment::Fragment;
-pub use render_macros::{html, rsx};
+pub use render_macros::{component, html, rsx};
 pub use renderable::Renderable;
 pub use simple_element::SimpleElement;
 pub use text_element::Raw;
