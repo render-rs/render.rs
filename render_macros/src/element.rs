@@ -5,7 +5,7 @@ use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream, Result};
 
 pub struct Element {
-    name: syn::Ident,
+    name: syn::Path,
     attributes: ElementAttributes,
     children: Children,
 }
@@ -33,9 +33,14 @@ impl Parse for Element {
 
 impl Element {
     pub fn is_custom_element(&self) -> bool {
-        let name = self.name.to_string();
-        let first_letter = name.get(0..1).unwrap();
-        first_letter.to_uppercase() == first_letter
+        match self.name.get_ident() {
+            None => true,
+            Some(ident) => {
+                let name = ident.to_string();
+                let first_letter = name.get(0..1).unwrap();
+                first_letter.to_uppercase() == first_letter
+            }
+        }
     }
 }
 

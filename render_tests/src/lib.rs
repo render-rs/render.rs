@@ -1,7 +1,7 @@
 #![feature(proc_macro_hygiene)]
 
 use render::html::HTML5Doctype;
-use render::{component, html, rsx, Fragment, Renderable};
+use render::{component, html, rsx, Renderable};
 
 #[derive(Debug)]
 struct Hello<'a, T: Renderable> {
@@ -29,13 +29,13 @@ pub fn it_works() -> String {
         <em>{format!("hello world?")}</em>
     };
     let value = html! {
-        <Fragment>
+        <>
             <HTML5Doctype />
             <Hello world yes={1 + 1}>
                 <div>{format!("HEY!")}</div>
                 {other_value}
             </Hello>
-        </Fragment>
+        </>
     };
     value
 }
