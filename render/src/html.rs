@@ -9,15 +9,14 @@ use crate::Renderable;
 /// # use pretty_assertions::assert_eq;
 /// # use render::html::HTML5Doctype;
 /// # use render::html;
-/// # use render::fragment::Fragment;
 /// # let result =
 /// html! {
-///     <Fragment>
+///     <>
 ///         <HTML5Doctype />
 ///         <html>
 ///             <body />
 ///         </html>
-///     </Fragment>
+///     </>
 /// };
 /// # assert_eq!(result, "<!DOCTYPE html><html><body /></html>");
 /// ```

@@ -18,8 +18,6 @@
 //! use render::{
 //!     // A macro to compose components in JSX fashion
 //!     html,
-//!     // A component that just render its children
-//!     Fragment,
 //!     // A trait for custom components
 //!     Renderable,
 //! };
@@ -36,7 +34,7 @@
 //! impl<'a, T: Renderable> Renderable for Page<'a, T> {
 //!     fn render(self) -> String {
 //!         html! {
-//!           <Fragment>
+//!           <>
 //!             <HTML5Doctype />
 //!             <html>
 //!               <head><title>{self.title}</title></head>
@@ -44,7 +42,7 @@
 //!                 {self.children}
 //!               </body>
 //!             </html>
-//!           </Fragment>
+//!           </>
 //!         }
 //!     }
 //! }
