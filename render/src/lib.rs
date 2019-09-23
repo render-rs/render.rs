@@ -6,11 +6,11 @@
 //!
 //! # How?
 //!
-//! A renderable component is a struct that implements [`Renderable`](./trait.Renderable.html). There
+//! A renderable component is a struct that implements the `Renderable` trait. There
 //! are multiple macros that provide a better experience implementing Renderable:
 //!
-//! * [`html!`](../render_macros/macro.html.html) for the JSX ergonomics
-//! * [`#[component]`](../render_macros/attr.component.html) for the syntactic-sugar of function components
+//! * `html!` for the JSX ergonomics
+//! * `#[component]` for the syntactic-sugar of function components
 //!
 //! # Why this is different from `typed-html`?
 //!
