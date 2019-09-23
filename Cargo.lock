@@ -64,30 +64,30 @@ dependencies = [
 
 [[package]]
 name = "render"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "htmlescape 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "pretty_assertions 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "render_macros 0.1.1",
+ "render_macros 0.2.0",
 ]
 
 [[package]]
 name = "render_macros"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "pretty_assertions 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "proc-macro2 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "quote 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "render 0.1.1",
+ "render 0.2.0",
  "syn 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "render_tests"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "pretty_assertions 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "render 0.1.1",
+ "render 0.2.0",
 ]
 
 [[package]]
