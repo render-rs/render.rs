@@ -80,6 +80,30 @@ use syn::parse_macro_input;
 ///
 /// assert_eq!(rendered, r#"<div id="main" />"#);
 /// ```
+///
+/// ### HTML entities can accept dashed-separated value
+///
+/// ```rust
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::html;
+/// # use pretty_assertions::assert_eq;
+/// let rendered = html! {
+///     <div data-testid={"some test id"} />
+/// };
+///
+/// assert_eq!(rendered, r#"<div data-testid="some test id" />"#);
+/// ```
+///
+/// ### Custom components can't accept dashed-separated values
+///
+/// ```compile_fail
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::html;
+/// // This will fail the compilation:
+/// let rendered = html! {
+///     <MyElement data-testid={"some test id"} />
+/// };
+/// ```
 #[proc_macro]
 pub fn html(input: TokenStream) -> TokenStream {
     let el = proc_macro2::TokenStream::from(rsx(input));
