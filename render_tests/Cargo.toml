@@ -1,6 +1,6 @@
 [package]
 name = "render_tests"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Gal Schlezinger <gal@spitfire.co.il>"]
 edition = "2018"
 publish = false

@@ -27,6 +27,26 @@ impl ElementAttribute {
             Self::Punned(ident) => quote!(#ident),
         }
     }
+
+    pub fn validate_for_custom_element(self) -> Result<Self> {
+        if self.idents().len() < 2 {
+            Ok(self)
+        } else {
+            let alternative_name = self
+                .idents()
+                .iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<_>>()
+                .join("_");
+
+            let error_message = format!(
+                "Can't use dash-separated values on custom components. Did you mean `{}`?",
+                alternative_name
+            );
+
+            Err(syn::Error::new(self.ident().span(), error_message))
+        }
+    }
 }
 
 impl PartialEq for ElementAttribute {

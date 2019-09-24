@@ -1,14 +1,24 @@
 //! > 🔏 A safe and simple template engine with the ergonomics of JSX
+//! 
+//! `render` itself is a combination of traits, structs and macros that together unify and
+//! boost the experience of composing tree-shaped data structures. This works best with HTML and
+//! XML rendering, but can work with other usages as well, like ReasonML's [`Pastel`](https://reason-native.com/docs/pastel/) library for terminal colors.
 //!
-//! The `Renderable` trait contains a simple function that returns `String`. This is very handy for type-safe HTML templates, but can also work for writing tree-like terminal coloring mechanism like ReasonML's [Pastel](https://reason-native.com/docs/pastel/).
+//! # How?
 //!
-//! ## Why this is different from `typed-html`?
+//! A renderable component is a struct that implements the `Renderable` trait. There
+//! are multiple macros that provide a better experience implementing Renderable:
+//!
+//! * `html!` for the JSX ergonomics
+//! * `#[component]` for the syntactic-sugar of function components
+//!
+//! # Why this is different from `typed-html`?
 //!
 //! `typed-html` is a wonderful library. Unfortunately, it focused its power in strictness of the HTML spec itself, and doesn't allow arbitrary compositions of custom elements.
 //!
 //! `render` takes a different approach. For now, HTML is not typed at all. It can get any key and get any string value. The main focus is custom components, so you can create a composable and declarative template with no runtime errors.
 //!
-//! ## Usage
+//! # Usage
 //!
 //! ```rust
 //! #![feature(proc_macro_hygiene)]
@@ -16,6 +26,8 @@
 //! // A simple HTML 5 doctype declaration
 //! use render::html::HTML5Doctype;
 //! use render::{
+//!     // A macro to create components
+//!     component,
 //!     // A macro to compose components in JSX fashion
 //!     html,
 //!     // A trait for custom components
@@ -23,28 +35,19 @@
 //! };
 //!
 //! // This can be any layout we want
-//! #[derive(Debug)]
-//! struct Page<'a, T: Renderable> {
-//!     title: &'a str,
-//!     children: T,
-//! }
-//!
-//! // Implementing `Renderable` gives the ability to compose
-//! // components
-//! impl<'a, T: Renderable> Renderable for Page<'a, T> {
-//!     fn render(self) -> String {
-//!         html! {
-//!           <>
-//!             <HTML5Doctype />
-//!             <html>
-//!               <head><title>{self.title}</title></head>
-//!               <body>
-//!                 {self.children}
-//!               </body>
-//!             </html>
-//!           </>
-//!         }
-//!     }
+//! #[component]
+//! fn Page<'a, Children: Renderable>(title: &'a str, children: Children) -> String {
+//!    html! {
+//!      <>
+//!        <HTML5Doctype />
+//!        <html>
+//!          <head><title>{title}</title></head>
+//!          <body>
+//!            {children}
+//!          </body>
+//!        </html>
+//!      </>
+//!    }
 //! }
 //!
 //! // This can be a route in Rocket, the web framework,
@@ -78,7 +81,7 @@ mod simple_element;
 mod text_element;
 
 pub use fragment::Fragment;
-pub use render_macros::{html, rsx};
+pub use render_macros::{component, html, rsx};
 pub use renderable::Renderable;
 pub use simple_element::SimpleElement;
 pub use text_element::Raw;
