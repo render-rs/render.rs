@@ -36,22 +36,19 @@ impl ElementAttributes {
     pub fn parse(input: ParseStream, is_custom_element: bool) -> Result<Self> {
         let mut parsed_self = input.parse::<Self>()?;
 
-        if is_custom_element {
-            let new_attributes: Attributes = parsed_self
-                .attributes
-                .drain()
-                .filter_map(|attribute| match attribute.validate_for_custom_element() {
-                    Ok(attribute) => Some(attribute),
-                    Err(err) => {
-                        err.span().unwrap().error(err.to_string()).emit();
-                        None
-                    }
-                })
-                .collect();
-            parsed_self.attributes = new_attributes;
-        }
+        let new_attributes: Attributes = parsed_self
+            .attributes
+            .drain()
+            .filter_map(|attribute| match attribute.validate(is_custom_element) {
+                Ok(x) => Some(x),
+                Err(err) => {
+                    err.span().unwrap().error(err.to_string()).emit();
+                    None
+                }
+            })
+            .collect();
 
-        Ok(parsed_self)
+        Ok(ElementAttributes::new(new_attributes))
     }
 }
 

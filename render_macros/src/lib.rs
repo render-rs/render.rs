@@ -51,23 +51,6 @@ use syn::parse_macro_input;
 /// assert_eq!(rendered, r#"<h1>Hello  world!</h1>"#);
 /// ```
 ///
-/// ### Punning is supported
-/// but instead of expanding to `value={true}`, it expands to
-/// `value={value}` like Rust's punning
-///
-/// ```rust
-/// # #![feature(proc_macro_hygiene)]
-/// # use render_macros::html;
-/// # use pretty_assertions::assert_eq;
-/// let class = "some_class";
-///
-/// let rendered = html! {
-///     <div class />
-/// };
-///
-/// assert_eq!(rendered, r#"<div class="some_class" />"#);
-/// ```
-///
 /// ### Values are always surrounded by curly braces
 ///
 /// ```rust
@@ -103,6 +86,36 @@ use syn::parse_macro_input;
 /// let rendered = html! {
 ///     <MyElement data-testid={"some test id"} />
 /// };
+/// ```
+///
+/// ### Punning is supported
+/// but instead of expanding to `value={true}`, it expands to
+/// `value={value}` like Rust's punning
+///
+/// ```rust
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::html;
+/// # use pretty_assertions::assert_eq;
+/// let class = "some_class";
+///
+/// let rendered = html! {
+///     <div class />
+/// };
+///
+/// assert_eq!(rendered, r#"<div class="some_class" />"#);
+/// ```
+///
+/// ### Punning is not supported for dashed-delimited attributes
+///
+/// ```compile_fail
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::html;
+///
+/// let rendered = html! {
+///     <div this-wont-work />
+/// };
+///
+/// assert_eq!(rendered, r#"<div class="some_class" />"#);
 /// ```
 #[proc_macro]
 pub fn html(input: TokenStream) -> TokenStream {

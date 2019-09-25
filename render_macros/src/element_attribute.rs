@@ -28,6 +28,14 @@ impl ElementAttribute {
         }
     }
 
+    pub fn validate(self, is_custom_element: bool) -> Result<Self> {
+        if is_custom_element {
+            self.validate_for_custom_element()
+        } else {
+            self.validate_for_simple_element()
+        }
+    }
+
     pub fn validate_for_custom_element(self) -> Result<Self> {
         if self.idents().len() < 2 {
             Ok(self)
@@ -40,11 +48,21 @@ impl ElementAttribute {
                 .join("_");
 
             let error_message = format!(
-                "Can't use dash-separated values on custom components. Did you mean `{}`?",
+                "Can't use dash-delimited values on custom components. Did you mean `{}`?",
                 alternative_name
             );
 
             Err(syn::Error::new(self.ident().span(), error_message))
+        }
+    }
+
+    pub fn validate_for_simple_element(self) -> Result<Self> {
+        match (&self, self.idents().len()) {
+            (Self::Punned(ref key), len) if len > 1 => {
+                let error_message = "Can't use punning with dash-delimited values";
+                Err(syn::Error::new(key.span(), error_message))
+            }
+            _ => Ok(self),
         }
     }
 }
