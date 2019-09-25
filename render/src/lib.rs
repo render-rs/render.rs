@@ -1,5 +1,5 @@
 //! > 🔏 A safe and simple template engine with the ergonomics of JSX
-//! 
+//!
 //! `render` itself is a combination of traits, structs and macros that together unify and
 //! boost the experience of composing tree-shaped data structures. This works best with HTML and
 //! XML rendering, but can work with other usages as well, like ReasonML's [`Pastel`](https://reason-native.com/docs/pastel/) library for terminal colors.
