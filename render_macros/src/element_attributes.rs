@@ -56,17 +56,16 @@ impl Parse for ElementAttributes {
     fn parse(input: ParseStream) -> Result<Self> {
         let mut attributes: HashSet<ElementAttribute> = HashSet::new();
         while input.peek(syn::Ident) {
-            if let Ok(attribute) = input.parse::<ElementAttribute>() {
-                let ident = attribute.ident();
-                if attributes.contains(&attribute) {
-                    let error_message = format!(
-                        "There is a previous definition of the {} attribute",
-                        quote!(#ident)
-                    );
-                    ident.span().unwrap().warning(error_message).emit();
-                }
-                attributes.insert(attribute);
+            let attribute = input.parse::<ElementAttribute>()?;
+            let ident = attribute.ident();
+            if attributes.contains(&attribute) {
+                let error_message = format!(
+                    "There is a previous definition of the {} attribute",
+                    quote!(#ident)
+                );
+                ident.span().unwrap().warning(error_message).emit();
             }
+            attributes.insert(attribute);
         }
         Ok(ElementAttributes::new(attributes))
     }
