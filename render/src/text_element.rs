@@ -1,17 +1,15 @@
-use crate::Renderable;
-use htmlescape::encode_minimal;
+use crate::Render;
+use std::io::{Result, Write};
 
-/// Renders an escaped-html string
-impl Renderable for String {
-    fn render(self) -> String {
-        encode_minimal(&self)
+impl Render for String {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
+        htmlescape::encode_minimal_w(&self, writer)
     }
 }
 
-/// Renders an escaped-html string
-impl Renderable for &str {
-    fn render(self) -> String {
-        encode_minimal(self)
+impl Render for &str {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
+        htmlescape::encode_minimal_w(self, writer)
     }
 }
 
@@ -26,9 +24,9 @@ impl<'s> From<&'s str> for Raw<'s> {
 }
 
 /// A raw (unencoded) html string
-impl<'s> Renderable for Raw<'s> {
-    fn render(self) -> String {
-        self.0.to_string()
+impl<'s> Render for Raw<'s> {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
+        write!(writer, "{}", self.0)
     }
 }
 

@@ -29,15 +29,17 @@
 //!     // A macro to create components
 //!     component,
 //!     // A macro to compose components in JSX fashion
+//!     rsx,
+//!     // A macro to render components in JSX fashion
 //!     html,
 //!     // A trait for custom components
-//!     Renderable,
+//!     Render,
 //! };
 //!
 //! // This can be any layout we want
 //! #[component]
-//! fn Page<'a, Children: Renderable>(title: &'a str, children: Children) -> String {
-//!    html! {
+//! fn Page<'a, Children: Render>(title: &'a str, children: Children) {
+//!    rsx! {
 //!      <>
 //!        <HTML5Doctype />
 //!        <html>
@@ -74,14 +76,16 @@
 //! # assert_eq!(actual, expected);
 //! ```
 
+#![feature(proc_macro_hygiene)]
+
 pub mod fragment;
 pub mod html;
-mod renderable;
+mod render;
 mod simple_element;
 mod text_element;
 
+pub use self::render::Render;
 pub use fragment::Fragment;
 pub use render_macros::{component, html, rsx};
-pub use renderable::Renderable;
 pub use simple_element::SimpleElement;
 pub use text_element::Raw;

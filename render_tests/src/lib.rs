@@ -1,85 +1,70 @@
 #![feature(proc_macro_hygiene)]
 
-use render::html::HTML5Doctype;
-use render::{component, html, rsx, Renderable};
-
-#[derive(Debug)]
-struct Hello<'a, T: Renderable> {
-    world: &'a str,
-    yes: i32,
-    children: T,
-}
-
-impl<'a, T: Renderable> Renderable for Hello<'a, T> {
-    fn render(self) -> String {
-        html! {
-            <b class={"some_bem_class"}>
-                {format!("{}", self.world)}
-                <br />
-                {format!("A number: {}", self.yes)}
-                {self.children}
-            </b>
-        }
-    }
-}
-
-pub fn it_works() -> String {
-    let world = "hello";
-    let other_value = rsx! {
-        <em>{format!("hello world?")}</em>
-    };
-    let value = html! {
-        <>
-            <HTML5Doctype />
-            <Hello world yes={1 + 1}>
-                <div data-testid={"hey"} hello={"hello"}>{format!("HEY!")}</div>
-                {other_value}
-            </Hello>
-        </>
-    };
-    value
-}
-
-#[component]
-pub fn Layout<'a, Children: Renderable>(title: &'a str, children: Children) -> String {
-    html! {
-        <html>
-            <head><title>{title}</title></head>
-            <body>
-                {children}
-            </body>
-        </html>
-    }
-}
-
-#[component]
-pub fn SomeComponent(name: String) -> String {
-    html! {
-        <div>{format!("Hello, {}", name)}</div>
-    }
-}
-
-#[test]
-pub fn verify_works() {
-    println!("{}", it_works());
-}
-
 #[test]
 pub fn works_with_dashes() {
     use pretty_assertions::assert_eq;
 
-    let value = html! { <div data-id={"some id"} /> };
-    assert_eq!(value, r#"<div data-id="some id" />"#);
+    let value = render::html! { <div data-id={"myid"} /> };
+    assert_eq!(value, r#"<div data-id="myid" />"#);
 }
 
 #[test]
 pub fn works_with_raw() {
     use pretty_assertions::assert_eq;
-    use render::raw;
+    use render::{html, raw};
 
     let actual = html! {
         <div>{raw!("<Hello />")}</div>
     };
 
     assert_eq!(actual, "<div><Hello /></div>");
+}
+
+mod kaki {
+    // A simple HTML 5 doctype declaration
+    use render::html::HTML5Doctype;
+    use render::{
+        // A macro to create components
+        component,
+        // A macro to compose components in JSX fashion
+        rsx,
+        // A trait for custom components
+        Render,
+    };
+
+    // This can be any layout we want
+    #[component]
+    fn Page<'a, Children: Render>(title: &'a str, children: Children) {
+        rsx! {
+          <>
+            <HTML5Doctype />
+            <html>
+              <head><title>{title}</title></head>
+              <body>
+                {children}
+              </body>
+            </html>
+          </>
+        }
+    }
+
+    #[test]
+    fn test() {
+        use pretty_assertions::assert_eq;
+        let actual = render::html! {
+          <Page title={"Home"}>
+            {format!("Welcome, {}", "Gal")}
+          </Page>
+        };
+        let expected = concat!(
+            "<!DOCTYPE html>",
+            "<html>",
+            "<head><title>Home</title></head>",
+            "<body>",
+            "Welcome, Gal",
+            "</body>",
+            "</html>"
+        );
+        assert_eq!(actual, expected);
+    }
 }

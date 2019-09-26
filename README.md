@@ -31,15 +31,17 @@ use render::{
     // A macro to create components
     component,
     // A macro to compose components in JSX fashion
+    rsx,
+    // A macro to render components in JSX fashion
     html,
     // A trait for custom components
-    Renderable,
+    Render,
 };
 
 // This can be any layout we want
 #[component]
-fn Page<'a, Children: Renderable>(title: &'a str, children: Children) -> String {
-   html! {
+fn Page<'a, Children: Render>(title: &'a str, children: Children) {
+   rsx! {
      <>
        <HTML5Doctype />
        <html>

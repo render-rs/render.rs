@@ -1,6 +1,7 @@
 //! HTML utilities
 
-use crate::Renderable;
+use crate::Render;
+use std::io::{Result, Write};
 
 /// HTML 5 doctype declaration
 ///
@@ -23,8 +24,8 @@ use crate::Renderable;
 #[derive(Debug)]
 pub struct HTML5Doctype;
 
-impl Renderable for HTML5Doctype {
-    fn render(self) -> String {
-        "<!DOCTYPE html>".to_string()
+impl Render for HTML5Doctype {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
+        write!(writer, "<!DOCTYPE html>")
     }
 }
