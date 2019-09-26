@@ -51,6 +51,43 @@ use syn::parse_macro_input;
 /// assert_eq!(rendered, r#"<h1>Hello  world!</h1>"#);
 /// ```
 ///
+/// ### Values are always surrounded by curly braces
+///
+/// ```rust
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::html;
+/// # use pretty_assertions::assert_eq;
+/// let rendered = html! {
+///     <div id={"main"} />
+/// };
+///
+/// assert_eq!(rendered, r#"<div id="main" />"#);
+/// ```
+///
+/// ### HTML entities can accept dashed-separated value
+///
+/// ```rust
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::html;
+/// # use pretty_assertions::assert_eq;
+/// let rendered = html! {
+///     <div data-testid={"some test id"} />
+/// };
+///
+/// assert_eq!(rendered, r#"<div data-testid="some test id" />"#);
+/// ```
+///
+/// ### Custom components can't accept dashed-separated values
+///
+/// ```compile_fail
+/// # #![feature(proc_macro_hygiene)]
+/// # use render_macros::html;
+/// // This will fail the compilation:
+/// let rendered = html! {
+///     <MyElement data-testid={"some test id"} />
+/// };
+/// ```
+///
 /// ### Punning is supported
 /// but instead of expanding to `value={true}`, it expands to
 /// `value={value}` like Rust's punning
@@ -68,17 +105,17 @@ use syn::parse_macro_input;
 /// assert_eq!(rendered, r#"<div class="some_class" />"#);
 /// ```
 ///
-/// ### Values are always surrounded by curly braces
+/// ### Punning is not supported for dashed-delimited attributes
 ///
-/// ```rust
+/// ```compile_fail
 /// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::html;
-/// # use pretty_assertions::assert_eq;
+///
 /// let rendered = html! {
-///     <div id={"main"} />
+///     <div this-wont-work />
 /// };
 ///
-/// assert_eq!(rendered, r#"<div id="main" />"#);
+/// assert_eq!(rendered, r#"<div class="some_class" />"#);
 /// ```
 #[proc_macro]
 pub fn html(input: TokenStream) -> TokenStream {

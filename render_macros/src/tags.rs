@@ -7,28 +7,39 @@ pub struct OpenTag {
     pub name: syn::Path,
     pub attributes: ElementAttributes,
     pub self_closing: bool,
+    pub is_custom_element: bool,
 }
 
 fn name_or_fragment(maybe_name: Result<syn::Path>) -> syn::Path {
-    maybe_name.unwrap_or_else(|_| {
-        syn::parse_str::<syn::Path>("::render::Fragment").unwrap()
-    })
+    maybe_name.unwrap_or_else(|_| syn::parse_str::<syn::Path>("::render::Fragment").unwrap())
+}
+
+fn is_custom_element_name(path: &syn::Path) -> bool {
+    match path.get_ident() {
+        None => true,
+        Some(ident) => {
+            let name = ident.to_string();
+            let first_letter = name.get(0..1).unwrap();
+            first_letter.to_uppercase() == first_letter
+        }
+    }
 }
 
 impl Parse for OpenTag {
     fn parse(input: ParseStream) -> Result<Self> {
         input.parse::<syn::Token![<]>()?;
         let maybe_name = syn::Path::parse_mod_style(input);
-        let attributes = input.parse::<ElementAttributes>()?;
+        let name = name_or_fragment(maybe_name);
+        let is_custom_element = is_custom_element_name(&name);
+        let attributes = ElementAttributes::parse(input, is_custom_element)?;
         let self_closing = input.parse::<syn::Token![/]>().is_ok();
         input.parse::<syn::Token![>]>()?;
-
-        let name = name_or_fragment(maybe_name);
 
         Ok(Self {
             name,
             attributes,
             self_closing,
+            is_custom_element,
         })
     }
 }

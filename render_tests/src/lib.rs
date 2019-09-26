@@ -32,7 +32,7 @@ pub fn it_works() -> String {
         <>
             <HTML5Doctype />
             <Hello world yes={1 + 1}>
-                <div>{format!("HEY!")}</div>
+                <div data-testid={"hey"} hello={"hello"}>{format!("HEY!")}</div>
                 {other_value}
             </Hello>
         </>
@@ -62,6 +62,14 @@ pub fn SomeComponent(name: String) -> String {
 #[test]
 pub fn verify_works() {
     println!("{}", it_works());
+}
+
+#[test]
+pub fn works_with_dashes() {
+    use pretty_assertions::assert_eq;
+
+    let value = html! { <div data-id={"some id"} /> };
+    assert_eq!(value, r#"<div data-id="some id" />"#);
 }
 
 #[test]
