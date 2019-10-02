@@ -42,7 +42,7 @@ pub fn create_function_component(f: syn::ItemFn) -> TokenStream {
         #vis struct #struct_name#impl_generics #inputs_block
 
         impl#impl_generics ::render::Render for #struct_name #ty_generics #where_clause {
-            fn render_into<W: std::io::Write>(self, w: &mut W) -> std::io::Result<()> {
+            fn render_into<W: std::fmt::Write>(self, w: &mut W) -> std::fmt::Result {
                 let result = {
                     #inputs_reading
                     #block

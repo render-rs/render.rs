@@ -1,15 +1,16 @@
 use crate::Render;
-use std::io::{Result, Write};
+use std::fmt::{Result, Write};
+use crate::html_escaping::escape_html;
 
 impl Render for String {
-    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
-        htmlescape::encode_minimal_w(&self, writer)
+    fn render_into<W: Write>(self, writer: &mut W) -> Result {
+        escape_html(&self, writer)
     }
 }
 
 impl Render for &str {
-    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
-        htmlescape::encode_minimal_w(self, writer)
+    fn render_into<W: Write>(self, writer: &mut W) -> Result {
+        escape_html(self, writer)
     }
 }
 
@@ -25,7 +26,7 @@ impl<'s> From<&'s str> for Raw<'s> {
 
 /// A raw (unencoded) html string
 impl<'s> Render for Raw<'s> {
-    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result {
         write!(writer, "{}", self.0)
     }
 }
@@ -36,12 +37,14 @@ mod tests {
 
     #[test]
     fn decodes_html() {
+        use pretty_assertions::assert_eq;
         let rendered = "<Hello />".render();
         assert_eq!(rendered, "&lt;Hello /&gt;");
     }
 
     #[test]
     fn allows_raw_text() {
+        use pretty_assertions::assert_eq;
         let rendered = Raw::from("<Hello />").render();
         assert_eq!(rendered, "<Hello />");
     }

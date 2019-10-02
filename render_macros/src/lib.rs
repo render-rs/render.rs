@@ -41,7 +41,7 @@ use syn::parse_macro_input;
 /// struct Heading<'t> { title: &'t str }
 ///
 /// impl<'t> Render for Heading<'t> {
-///     fn render_into<W: std::io::Write>(self, writer: &mut W) -> std::io::Result<()> {
+///     fn render_into<W: std::fmt::Write>(self, writer: &mut W) -> std::fmt::Result {
 ///         Render::render_into(rsx! { <h1>{self.title}</h1> }, writer)
 ///     }
 /// }
@@ -160,7 +160,7 @@ pub fn rsx(input: TokenStream) -> TokenStream {
 /// struct User { name: String }
 ///
 /// impl render::Render for User {
-///     fn render_into<W: std::io::Write>(self, writer: &mut W) -> std::io::Result<()> {
+///     fn render_into<W: std::fmt::Write>(self, writer: &mut W) -> std::fmt::Result {
 ///         Render::render_into(rsx! { <div>{format!("Hello, {}", self.name)}</div> }, writer)
 ///     }
 /// }

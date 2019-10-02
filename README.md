@@ -67,7 +67,7 @@ a component tree, and then calls `render` on it. Most of the time, you'll find y
 the `rsx!` macro to compose arbitrary components, and only calling `html!` when you need a
 String output, when sending a response or generating a Markdown file.
 
-In Render, attributes and plain strings are escaped using the `htmlescape` crate. In order to
+In Render, attributes and plain strings are escaped using the `render::html_escaping` module. In order to
 use un-escaped values so you can dangerously insert raw HTML, use the `raw!` macro around your
 string:
 
