@@ -1,6 +1,7 @@
 //! The fragment component
 
-use crate::Renderable;
+use crate::Render;
+use std::fmt::{Result, Write};
 
 /// A top-level root component to combine a same-level components
 /// in a RSX fashion
@@ -8,7 +9,6 @@ use crate::Renderable;
 /// ```rust
 /// # #![feature(proc_macro_hygiene)]
 /// # use pretty_assertions::assert_eq;
-/// # use render::html::HTML5Doctype;
 /// # use render_macros::html;
 /// let result = html! {
 ///     <>
@@ -19,12 +19,12 @@ use crate::Renderable;
 /// assert_eq!(result, "<a /><b />");
 /// ```
 #[derive(Debug)]
-pub struct Fragment<T: Renderable> {
+pub struct Fragment<T: Render> {
     pub children: T,
 }
 
-impl<T: Renderable> Renderable for Fragment<T> {
-    fn render(self) -> String {
-        self.children.render()
+impl<T: Render> Render for Fragment<T> {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result {
+        self.children.render_into(writer)
     }
 }

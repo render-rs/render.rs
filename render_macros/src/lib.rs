@@ -34,21 +34,21 @@ use syn::parse_macro_input;
 /// ```rust
 /// # #![feature(proc_macro_hygiene)]
 /// # use pretty_assertions::assert_eq;
-/// # use render_macros::html;
-/// use render::Renderable;
+/// # use render_macros::{html, rsx};
+/// use render::Render;
 ///
 /// #[derive(Debug)]
 /// struct Heading<'t> { title: &'t str }
 ///
-/// impl<'t> Renderable for Heading<'t> {
-///     fn render(self) -> String {
-///         html! { <h1>{self.title}</h1> }
+/// impl<'t> Render for Heading<'t> {
+///     fn render_into<W: std::fmt::Write>(self, writer: &mut W) -> std::fmt::Result {
+///         Render::render_into(rsx! { <h1>{self.title}</h1> }, writer)
 ///     }
 /// }
 ///
-/// let rendered = html! { <Heading title={"Hello  world!"} /> };
+/// let rendered = html! { <Heading title={"Hello world!"} /> };
 ///
-/// assert_eq!(rendered, r#"<h1>Hello  world!</h1>"#);
+/// assert_eq!(rendered, r#"<h1>Hello world!</h1>"#);
 /// ```
 ///
 /// ### Values are always surrounded by curly braces
@@ -71,10 +71,10 @@ use syn::parse_macro_input;
 /// # use render_macros::html;
 /// # use pretty_assertions::assert_eq;
 /// let rendered = html! {
-///     <div data-testid={"some test id"} />
+///     <div data-testid={"sometestid"} />
 /// };
 ///
-/// assert_eq!(rendered, r#"<div data-testid="some test id" />"#);
+/// assert_eq!(rendered, r#"<div data-testid="sometestid" />"#);
 /// ```
 ///
 /// ### Custom components can't accept dashed-separated values
@@ -96,13 +96,13 @@ use syn::parse_macro_input;
 /// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::html;
 /// # use pretty_assertions::assert_eq;
-/// let class = "some_class";
+/// let class = "someclass";
 ///
 /// let rendered = html! {
 ///     <div class />
 /// };
 ///
-/// assert_eq!(rendered, r#"<div class="some_class" />"#);
+/// assert_eq!(rendered, r#"<div class="someclass" />"#);
 /// ```
 ///
 /// ### Punning is not supported for dashed-delimited attributes
@@ -120,7 +120,7 @@ use syn::parse_macro_input;
 #[proc_macro]
 pub fn html(input: TokenStream) -> TokenStream {
     let el = proc_macro2::TokenStream::from(rsx(input));
-    let result = quote! { ::render::Renderable::render(#el) };
+    let result = quote! { ::render::Render::render(#el) };
     TokenStream::from(result)
 }
 
@@ -132,7 +132,7 @@ pub fn rsx(input: TokenStream) -> TokenStream {
     TokenStream::from(result)
 }
 
-/// A syntactic sugar for implementing [`Renderable`](../render/trait.Renderable.html) conveniently
+/// A syntactic sugar for implementing [`Render`](../render/trait.Render.html) conveniently
 /// using functions.
 ///
 /// This attribute should be above a stand-alone function definition that returns a
@@ -140,34 +140,34 @@ pub fn rsx(input: TokenStream) -> TokenStream {
 ///
 /// ```rust
 /// # #![feature(proc_macro_hygiene)]
-/// # use render_macros::{component, html};
+/// # use render_macros::{component, rsx};
 /// #
 /// #[component]
-/// fn UserFn(name: String) -> String {
-///     html! { <div>{format!("Hello, {}", name)}</div> }
+/// fn UserFn(name: String) {
+///     rsx! { <div>{format!("Hello, {}", name)}</div> }
 /// }
 /// ```
 ///
-/// Practically, this is exactly the same as using the [Renderable](../render/trait.Renderable.html) trait:
+/// Practically, this is exactly the same as using the [Render](../render/trait.Render.html) trait:
 ///
 /// ```rust
 /// # #![feature(proc_macro_hygiene)]
-/// # use render_macros::{component, html};
-/// # use render::Renderable;
+/// # use render_macros::{component, rsx, html};
+/// # use render::Render;
 /// # use pretty_assertions::assert_eq;
 /// #
 /// #[derive(Debug)]
 /// struct User { name: String }
 ///
-/// impl render::Renderable for User {
-///     fn render(self) -> String {
-///         html! { <div>{format!("Hello, {}", self.name)}</div> }
+/// impl render::Render for User {
+///     fn render_into<W: std::fmt::Write>(self, writer: &mut W) -> std::fmt::Result {
+///         Render::render_into(rsx! { <div>{format!("Hello, {}", self.name)}</div> }, writer)
 ///     }
 /// }
 ///
 /// # #[component]
-/// # fn UserFn(name: String) -> String {
-/// #     html! { <div>{format!("Hello, {}", name)}</div> }
+/// # fn UserFn(name: String) {
+/// #     rsx! { <div>{format!("Hello, {}", name)}</div> }
 /// # }
 /// #
 /// # let from_fn = html! {
@@ -183,5 +183,5 @@ pub fn rsx(input: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn component(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let f = parse_macro_input!(item as syn::ItemFn);
-    function_component::to_component(f)
+    function_component::create_function_component(f)
 }

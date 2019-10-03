@@ -14,7 +14,6 @@ license = "MIT"
 
 [dependencies]
 render_macros = { path = "../render_macros", version = "0.2" }
-htmlescape = "0.3"
 
 [dev-dependencies]
 pretty_assertions = "0.6"

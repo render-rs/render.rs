@@ -47,9 +47,8 @@ impl Parse for Children {
         let mut nodes = vec![];
 
         while !input.peek(syn::Token![<]) || !input.peek2(syn::Token![/]) {
-            if let Ok(child) = input.parse::<Child>() {
-                nodes.push(child);
-            }
+            let child = input.parse::<Child>()?;
+            nodes.push(child);
         }
 
         Ok(Self::new(nodes))

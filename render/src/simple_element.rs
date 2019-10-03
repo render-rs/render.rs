@@ -1,41 +1,48 @@
-use crate::Renderable;
+use crate::Render;
+use crate::html_escaping::escape_html;
 use std::collections::HashMap;
+use std::fmt::{Result, Write};
+
+type Attributes<'a> = Option<HashMap<&'a str, &'a str>>;
 
 /// Simple HTML element tag
 #[derive(Debug)]
-pub struct SimpleElement<'a, T: Renderable> {
+pub struct SimpleElement<'a, T: Render> {
     /// the HTML tag name, like `html`, `head`, `body`, `link`...
     pub tag_name: &'a str,
-    pub attributes: Option<HashMap<&'a str, &'a str>>,
+    pub attributes: Attributes<'a>,
     pub contents: Option<T>,
 }
 
-fn attributes_to_string<Key: std::fmt::Display + std::hash::Hash, Value: std::fmt::Debug>(
-    opt: &Option<HashMap<Key, Value>>,
-) -> String {
-    match opt {
-        None => "".to_string(),
-        Some(map) => {
-            let s: String = map
-                .iter()
-                .map(|(key, value)| format!(" {}={:?}", key, value))
-                .collect();
-            s
+fn write_attributes<'a, W: Write>(maybe_attributes: Attributes<'a>, writer: &mut W) -> Result {
+    match maybe_attributes {
+        None => Ok(()),
+        Some(mut attributes) => {
+            for (key, value) in attributes.drain() {
+                write!(writer, " {}=\"", key)?;
+                escape_html(value, writer)?;
+                write!(writer, "\"")?;
+            }
+            Ok(())
         }
     }
 }
 
-impl<'a, T: Renderable> Renderable for SimpleElement<'a, T> {
-    fn render(self) -> String {
-        let attrs = attributes_to_string(&self.attributes);
+impl<T: Render> Render for SimpleElement<'_, T> {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result {
         match self.contents {
-            None => format!("<{}{} />", self.tag_name, attrs),
-            Some(renderable) => format!(
-                "<{tag_name}{attrs}>{contents}</{tag_name}>",
-                tag_name = self.tag_name,
-                attrs = attrs,
-                contents = renderable.render()
-            ),
+            None => {
+                write!(writer, "<{}", self.tag_name)?;
+                write_attributes(self.attributes, writer)?;
+                write!(writer, " />")
+            }
+            Some(renderable) => {
+                write!(writer, "<{}", self.tag_name)?;
+                write_attributes(self.attributes, writer)?;
+                write!(writer, ">")?;
+                renderable.render_into(writer)?;
+                write!(writer, "</{}>", self.tag_name)
+            }
         }
     }
 }

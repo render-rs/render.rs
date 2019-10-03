@@ -2,7 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
 
-pub fn to_component(f: syn::ItemFn) -> TokenStream {
+pub fn create_function_component(f: syn::ItemFn) -> TokenStream {
     let struct_name = f.sig.ident;
     let (impl_generics, ty_generics, where_clause) = f.sig.generics.split_for_impl();
     let inputs = f.sig.inputs;
@@ -41,10 +41,13 @@ pub fn to_component(f: syn::ItemFn) -> TokenStream {
         #[derive(Debug)]
         #vis struct #struct_name#impl_generics #inputs_block
 
-        impl#impl_generics ::render::Renderable for #struct_name #ty_generics #where_clause {
-            fn render(self) -> String {
-                #inputs_reading
-                #block
+        impl#impl_generics ::render::Render for #struct_name #ty_generics #where_clause {
+            fn render_into<W: std::fmt::Write>(self, w: &mut W) -> std::fmt::Result {
+                let result = {
+                    #inputs_reading
+                    #block
+                };
+                ::render::Render::render_into(result, w)
             }
         }
     })
