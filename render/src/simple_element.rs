@@ -3,7 +3,7 @@ use crate::html_escaping::escape_html;
 use std::collections::HashMap;
 use std::fmt::{Result, Write};
 
-type Attributes<'a> = Option<HashMap<&'a str, &'a str>>;
+type Attributes<'a> = Option<HashMap<&'a str, String>>;
 
 /// Simple HTML element tag
 #[derive(Debug)]
@@ -20,7 +20,7 @@ fn write_attributes<'a, W: Write>(maybe_attributes: Attributes<'a>, writer: &mut
         Some(mut attributes) => {
             for (key, value) in attributes.drain() {
                 write!(writer, " {}=\"", key)?;
-                escape_html(value, writer)?;
+                escape_html(&value, writer)?;
                 write!(writer, "\"")?;
             }
             Ok(())
