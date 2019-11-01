@@ -50,6 +50,16 @@ impl<T: Render> Render for Option<T> {
     }
 }
 
+impl<T: Render> Render for Vec<T> 
+{
+    fn render_into<W: Write>(self, writer: &mut W) -> Result {
+        for elem in self {
+            elem.render_into(writer)?;
+        }
+        Ok(())
+    }
+}
+
 /// Renders `O` or `E`
 impl<O: Render, E: Render> Render for std::result::Result<O, E> {
     fn render_into<W: Write>(self, writer: &mut W) -> Result {
