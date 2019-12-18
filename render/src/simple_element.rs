@@ -1,5 +1,5 @@
-use crate::Render;
 use crate::html_escaping::escape_html;
+use crate::Render;
 use std::collections::HashMap;
 use std::fmt::{Result, Write};
 
@@ -34,7 +34,7 @@ impl<T: Render> Render for SimpleElement<'_, T> {
             None => {
                 write!(writer, "<{}", self.tag_name)?;
                 write_attributes(self.attributes, writer)?;
-                write!(writer, " />")
+                write!(writer, "/>")
             }
             Some(renderable) => {
                 write!(writer, "<{}", self.tag_name)?;

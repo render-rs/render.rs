@@ -5,7 +5,7 @@ pub fn works_with_dashes() {
     use pretty_assertions::assert_eq;
 
     let value = render::html! { <div data-id={"myid"} /> };
-    assert_eq!(value, r#"<div data-id="myid" />"#);
+    assert_eq!(value, r#"<div data-id="myid"/>"#);
 }
 
 #[test]
