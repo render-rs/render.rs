@@ -16,7 +16,7 @@ use std::fmt::{Result, Write};
 ///         <b />
 ///     </>
 /// };
-/// assert_eq!(result, "<a /><b />");
+/// assert_eq!(result, "<a/><b/>");
 /// ```
 #[derive(Debug)]
 pub struct Fragment<T: Render> {
