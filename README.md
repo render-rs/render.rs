@@ -123,7 +123,7 @@ If you pay close attention, you see that the function `Heading` is:
 Often you're going to want to store your components somewhere else in your
 project tree other than the module you're working on (if not in a different
 module entirely!). In these cases, the visibility applied top the function that
-defines your component will flow down into all elements of that struct.
+defines your component will flow down into all fields of that struct.
 
 For example, if we add "pub" to the front of our Heading component above:
 
