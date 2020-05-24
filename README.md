@@ -11,9 +11,9 @@ XML rendering, but can work with other usages as well, like ReasonML's [`Pastel`
 A renderable component is a struct that implements the `Render` trait. There
 are multiple macros that provide a better experience implementing Renderable:
 
-* `#[component]` for defining components using a function
-* `rsx!` for composing elements with JSX ergonomics
-* `html!` for composing elements and render them to a string
+- `#[component]` for defining components using a function
+- `rsx!` for composing elements with JSX ergonomics
+- `html!` for composing elements and render them to a string
 
 ## Why is this different from...
 
@@ -113,10 +113,37 @@ assert_eq!(rendered_html, r#"<h1 class="title">Hello world!</h1>"#);
 
 If you pay close attention, you see that the function `Heading` is:
 
-* declared with an uppercase. Underneath, it generates a struct with the same name, and
-implements the `Render` trait on it.
-* does not have a return type. This is because everything is written to a writer, for
-performance reasons.
+- declared with an uppercase. Underneath, it generates a struct with the same name, and
+  implements the `Render` trait on it.
+- does not have a return type. This is because everything is written to a writer, for
+  performance reasons.
+
+### Visibility & Component Libraries
+
+Often you're going to want to store your components somewhere else in your
+project tree other than the module you're working on (if not in a different
+module entirely!). In these cases, the visibility applied top the function that
+defines your component will flow down into all elements of that struct.
+
+For example, if we add "pub" to the front of our Heading component above:
+
+```rust
+#[component]
+pub fn Heading<'title>(title: &'title str) {
+  rsx! { <h1 class={"title"}>{title}</h1> }
+}
+```
+
+...the struct that is generated would look something like...
+
+```rust
+pub struct Heading {
+  pub title: &'title str
+}
+```
+
+This is important to understand from a safety point of view when structuring
+your libraries.
 
 #### Full example
 
