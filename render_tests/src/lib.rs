@@ -26,14 +26,28 @@ pub fn element_ordering() {
     use render::{html, raw};
 
     let actual = html! {
+      <ul>
+        <li>{"1"}</li>
+        <li>{"2"}</li>
+        <li>{"3"}</li>
+      </ul>
+    };
+
+    assert_eq!(actual, "<ul><li>1</li><li>2</li><li>3</li></ul>");
+
+    let deep = html! {
+      <div>
+        <h1>{"A list"}</h1>
+        <hr />
         <ul>
           <li>{"1"}</li>
           <li>{"2"}</li>
           <li>{"3"}</li>
         </ul>
+      </div>
     };
 
-    assert_eq!(actual, "<ul><li>1</li><li>2</li><li>3</li></ul>");
+    assert_eq!(deep, "<div><h1>A list</h1><hr/><ul><li>1</li><li>2</li><li>3</li></ul></div>");
 }
 
 mod kaki {
