@@ -10,7 +10,11 @@ pub fn create_function_component(f: syn::ItemFn) -> TokenStream {
     let vis = f.vis;
 
     let inputs_block = if inputs.len() > 0 {
-        quote!({ #inputs })
+        let input_names: Vec<_> = inputs
+            .iter()
+            .collect();
+
+        quote!({ #(#vis #input_names),* })
     } else {
         quote!(;)
     };
