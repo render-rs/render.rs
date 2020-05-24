@@ -20,6 +20,22 @@ pub fn works_with_raw() {
     assert_eq!(actual, "<div><Hello /></div>");
 }
 
+#[test]
+pub fn element_ordering() {
+  use pretty_assertions::assert_eq;
+    use render::{html, raw};
+
+    let actual = html! {
+        <ul>
+          <li>{"1"}</li>
+          <li>{"2"}</li>
+          <li>{"3"}</li>
+        </ul>
+    };
+
+    assert_eq!(actual, "<ul><li>1</li><li>2</li><li>3</li></ul>");
+}
+
 mod kaki {
     // A simple HTML 5 doctype declaration
     use render::html::HTML5Doctype;
@@ -102,7 +118,11 @@ mod other {
   use render::{ component, rsx, Render };
 
   #[component]
-  pub fn ExternalPage<'title, 'subtitle, Children: Render>(title: &'title str, subtitle: &'subtitle str, children: Children) {
+  pub fn ExternalPage<'title, 'subtitle, Children: Render>(
+    title: &'title str, 
+    subtitle: &'subtitle str, 
+    children: Children
+  ) {
       rsx! {
           <>
             <HTML5Doctype />
