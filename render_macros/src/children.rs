@@ -24,16 +24,19 @@ impl Children {
                 quote! { #child }
             })
             .collect();
+
         match children_quotes.len() {
             0 => quote! { Option::<()>::None },
-            1 => quote! { Some(#(#children_quotes)*) },
+            1 => quote! { Some(#(#children_quotes),*) },
             _ => {
                 let mut iter = children_quotes.iter();
+                
                 let first = iter.next().unwrap();
                 let second = iter.next().unwrap();
+
                 let tuple_of_tuples = iter.fold(
                     quote!((#first, #second)),
-                    |renderable, current| quote!((#current, #renderable)),
+                    |renderable, current| quote!((#renderable, #current)),
                 );
 
                 quote! { Some(#tuple_of_tuples) }

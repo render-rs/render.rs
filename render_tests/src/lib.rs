@@ -20,6 +20,36 @@ pub fn works_with_raw() {
     assert_eq!(actual, "<div><Hello /></div>");
 }
 
+#[test]
+pub fn element_ordering() {
+  use pretty_assertions::assert_eq;
+    use render::{html, raw};
+
+    let actual = html! {
+      <ul>
+        <li>{"1"}</li>
+        <li>{"2"}</li>
+        <li>{"3"}</li>
+      </ul>
+    };
+
+    assert_eq!(actual, "<ul><li>1</li><li>2</li><li>3</li></ul>");
+
+    let deep = html! {
+      <div>
+        <h1>{"A list"}</h1>
+        <hr />
+        <ul>
+          <li>{"1"}</li>
+          <li>{"2"}</li>
+          <li>{"3"}</li>
+        </ul>
+      </div>
+    };
+
+    assert_eq!(deep, "<div><h1>A list</h1><hr/><ul><li>1</li><li>2</li><li>3</li></ul></div>");
+}
+
 mod kaki {
     // A simple HTML 5 doctype declaration
     use render::html::HTML5Doctype;
@@ -67,4 +97,57 @@ mod kaki {
         );
         assert_eq!(actual, expected);
     }
+
+    #[test]
+    fn externals_test() {
+        use pretty_assertions::assert_eq;
+        use crate::other::ExternalPage;
+
+        let actual = render::html! {
+          <ExternalPage title={"Home"} subtitle={"Foo"}>
+            {format!("Welcome, {}", "Gal")}
+          </ExternalPage>
+        };
+
+        let expected = concat!(
+            "<!DOCTYPE html>",
+            "<html>",
+            "<head><title>Home</title></head>",
+            "<body>",
+            "<h1>Foo</h1>",
+            "Welcome, Gal",
+            "</body>",
+            "</html>"
+        );
+        assert_eq!(actual, expected);
+    }
+}
+
+/// ## Other
+/// 
+/// Module for testing component visibility when imported from other modules.
+
+mod other {
+  use render::html::HTML5Doctype;
+  use render::{ component, rsx, Render };
+
+  #[component]
+  pub fn ExternalPage<'title, 'subtitle, Children: Render>(
+    title: &'title str, 
+    subtitle: &'subtitle str, 
+    children: Children
+  ) {
+      rsx! {
+          <>
+            <HTML5Doctype />
+            <html>
+              <head><title>{title}</title></head>
+              <body>
+                <h1>{subtitle}</h1>
+                {children}
+              </body>
+            </html>
+          </>
+      }
+  }
 }
