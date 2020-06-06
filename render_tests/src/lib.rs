@@ -21,6 +21,17 @@ pub fn works_with_raw() {
 }
 
 #[test]
+pub fn works_with_raw_ident() {
+    use pretty_assertions::assert_eq;
+
+    let actual = render::html! {
+        <input r#type={"text"} />
+    };
+
+    assert_eq!(actual, r#"<input type="text"/>"#);
+}
+
+#[test]
 pub fn element_ordering() {
   use pretty_assertions::assert_eq;
     use render::{html, raw};
