@@ -2,6 +2,7 @@ use crate::children::Children;
 use crate::element_attribute::ElementAttribute;
 use quote::{quote, ToTokens};
 use std::collections::HashSet;
+use syn::ext::IdentExt;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::spanned::Spanned;
 
@@ -122,9 +123,9 @@ impl<'a> ToTokens for SimpleElementAttributes<'a> {
                 .iter()
                 .map(|attribute| {
                     let mut iter = attribute.ident().iter();
-                    let first_word = iter.next().unwrap();
+                    let first_word = iter.next().unwrap().unraw();
                     let ident = iter.fold(first_word.to_string(), |acc, curr| {
-                        format!("{}-{}", acc, curr)
+                        format!("{}-{}", acc, curr.unraw())
                     });
                     let value = attribute.value_tokens();
 
