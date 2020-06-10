@@ -1,4 +1,10 @@
 #[test]
+fn ui() {
+    let t = trybuild::TestCases::new();
+    t.compile_fail("ui/fail/*.rs");
+}
+
+#[test]
 pub fn works_with_dashes() {
     use pretty_assertions::assert_eq;
 
