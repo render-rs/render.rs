@@ -33,8 +33,8 @@ pub fn works_with_raw_ident() {
 
 #[test]
 pub fn element_ordering() {
-  use pretty_assertions::assert_eq;
-    use render::{html, raw};
+    use pretty_assertions::assert_eq;
+    use render::html;
 
     let actual = html! {
       <ul>
@@ -58,7 +58,10 @@ pub fn element_ordering() {
       </div>
     };
 
-    assert_eq!(deep, "<div><h1>A list</h1><hr/><ul><li>1</li><li>2</li><li>3</li></ul></div>");
+    assert_eq!(
+        deep,
+        "<div><h1>A list</h1><hr/><ul><li>1</li><li>2</li><li>3</li></ul></div>"
+    );
 }
 
 mod kaki {
@@ -111,8 +114,8 @@ mod kaki {
 
     #[test]
     fn externals_test() {
-        use pretty_assertions::assert_eq;
         use crate::other::ExternalPage;
+        use pretty_assertions::assert_eq;
 
         let actual = render::html! {
           <ExternalPage title={"Home"} subtitle={"Foo"}>
@@ -135,30 +138,30 @@ mod kaki {
 }
 
 /// ## Other
-/// 
+///
 /// Module for testing component visibility when imported from other modules.
 
 mod other {
-  use render::html::HTML5Doctype;
-  use render::{ component, rsx, Render };
+    use render::html::HTML5Doctype;
+    use render::{component, rsx, Render};
 
-  #[component]
-  pub fn ExternalPage<'title, 'subtitle, Children: Render>(
-    title: &'title str, 
-    subtitle: &'subtitle str, 
-    children: Children
-  ) {
-      rsx! {
-          <>
-            <HTML5Doctype />
-            <html>
-              <head><title>{title}</title></head>
-              <body>
-                <h1>{subtitle}</h1>
-                {children}
-              </body>
-            </html>
-          </>
-      }
-  }
+    #[component]
+    pub fn ExternalPage<'title, 'subtitle, Children: Render>(
+        title: &'title str,
+        subtitle: &'subtitle str,
+        children: Children,
+    ) {
+        rsx! {
+            <>
+              <HTML5Doctype />
+              <html>
+                <head><title>{title}</title></head>
+                <body>
+                  <h1>{subtitle}</h1>
+                  {children}
+                </body>
+              </html>
+            </>
+        }
+    }
 }

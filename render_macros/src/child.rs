@@ -12,7 +12,12 @@ impl ToTokens for Child {
         match self {
             Self::Element(element) => element.to_tokens(tokens),
             Self::RawBlock(block) => {
-                let ts = quote! { #block };
+                let ts = if block.stmts.len() == 1 {
+                    let first = &block.stmts[0];
+                    quote!(#first)
+                } else {
+                    quote!(#block)
+                };
                 ts.to_tokens(tokens);
             }
         }

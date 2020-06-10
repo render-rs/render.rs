@@ -1,6 +1,6 @@
+use crate::html_escaping::escape_html;
 use crate::Render;
 use std::fmt::{Result, Write};
-use crate::html_escaping::escape_html;
 
 impl Render for String {
     fn render_into<W: Write>(self, writer: &mut W) -> Result {
