@@ -24,6 +24,7 @@ jobs:
     - uses: hecrj/setup-rust-action@v1
       with:
         rust-version: nightly
+        components: rustfmt
     - uses: actions/checkout@v1
     - name: cargo fmt
       run: cargo fmt -- --check
