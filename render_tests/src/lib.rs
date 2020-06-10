@@ -1,5 +1,3 @@
-#![feature(proc_macro_hygiene)]
-
 #[test]
 pub fn works_with_dashes() {
     use pretty_assertions::assert_eq;

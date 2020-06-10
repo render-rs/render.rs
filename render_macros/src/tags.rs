@@ -1,4 +1,5 @@
 use crate::element_attributes::ElementAttributes;
+use proc_macro_error::emit_error;
 use quote::quote;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::spanned::Spanned;
@@ -56,7 +57,7 @@ impl ClosingTag {
         let self_path_str = quote!(#self_path).to_string();
         if self_path_str != open_tag_path_str {
             let error_message = format!("Expected closing tag for: <{}>", &open_tag_path_str);
-            self.name.span().unwrap().error(error_message).emit();
+            emit_error!(self.name.span(), "{}", error_message);
         }
     }
 }

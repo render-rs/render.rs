@@ -1,4 +1,5 @@
 use proc_macro::TokenStream;
+use proc_macro_error::emit_error;
 use quote::quote;
 use syn::spanned::Spanned;
 
@@ -25,7 +26,7 @@ pub fn create_function_component(f: syn::ItemFn) -> TokenStream {
             .filter_map(|argument| match argument {
                 syn::FnArg::Typed(typed) => Some(typed),
                 syn::FnArg::Receiver(rec) => {
-                    rec.span().unwrap().error("Don't use `self` on components");
+                    emit_error!(rec.span(), "Don't use `self` on components");
                     None
                 }
             })

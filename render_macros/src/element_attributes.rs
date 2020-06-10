@@ -1,5 +1,6 @@
 use crate::children::Children;
 use crate::element_attribute::ElementAttribute;
+use proc_macro_error::emit_error;
 use quote::{quote, ToTokens};
 use std::collections::HashSet;
 use syn::ext::IdentExt;
@@ -43,7 +44,7 @@ impl ElementAttributes {
             .filter_map(|attribute| match attribute.validate(is_custom_element) {
                 Ok(x) => Some(x),
                 Err(err) => {
-                    err.span().unwrap().error(err.to_string()).emit();
+                    emit_error!(err.span(), "Invalid attribute: {}", err);
                     None
                 }
             })
@@ -64,7 +65,7 @@ impl Parse for ElementAttributes {
                     "There is a previous definition of the {} attribute",
                     quote!(#ident)
                 );
-                ident.span().unwrap().warning(error_message).emit();
+                emit_error!(ident.span(), "{}", error_message);
             }
             attributes.insert(attribute);
         }

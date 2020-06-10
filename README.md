@@ -34,22 +34,12 @@ ergonomics or speed.
 
 ## Usage
 
-> Note: `render` needs the `nightly` Rust compiler, for now, so it will have hygienic macros.
-
-This means you will need to add the following feature flag in the root of your `lib.rs`/`main.rs`:
-
-```rust
-#![feature(proc_macro_hygiene)]
-```
-
 ### Simple HTML rendering
 
 In order to render a simple HTML fragment into a `String`, use the `rsx!` macro to generate a
 component tree, and call `render` on it:
 
 ```rust
-#![feature(proc_macro_hygiene)]
-
 use render::{rsx, Render};
 
 let tree = rsx! {
@@ -72,8 +62,6 @@ use un-escaped values so you can dangerously insert raw HTML, use the `raw!` mac
 string:
 
 ```rust
-#![feature(proc_macro_hygiene)]
-
 use render::{html, raw};
 
 let tree = html! {
@@ -95,8 +83,6 @@ In order to build up components from other components or HTML nodes, you can use
 macro, which generates a `Render` component tree:
 
 ```rust
-#![feature(proc_macro_hygiene)]
-
 use render::{component, rsx, html};
 
 #[component]
@@ -148,8 +134,6 @@ your libraries.
 #### Full example
 
 ```rust
-#![feature(proc_macro_hygiene)]
-
 // A simple HTML 5 doctype declaration
 use render::html::HTML5Doctype;
 use render::{
