@@ -61,11 +61,11 @@ impl Parse for ElementAttributes {
             let attribute = input.parse::<ElementAttribute>()?;
             let ident = attribute.ident();
             if attributes.contains(&attribute) {
-                let error_message = format!(
+                emit_error!(
+                    ident.span(),
                     "There is a previous definition of the {} attribute",
                     quote!(#ident)
                 );
-                emit_error!(ident.span(), "{}", error_message);
             }
             attributes.insert(attribute);
         }
