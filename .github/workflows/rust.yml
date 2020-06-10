@@ -26,4 +26,4 @@ jobs:
         rust-version: nightly
     - uses: actions/checkout@v1
     - name: cargo fmt
-      run: cargo fmt
+      run: cargo fmt -- --check
