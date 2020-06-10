@@ -23,7 +23,14 @@ impl ElementAttribute {
 
     pub fn value_tokens(&self) -> proc_macro2::TokenStream {
         match self {
-            Self::WithValue(_, value) => quote!(#value),
+            Self::WithValue(_, value) => {
+                if value.stmts.len() == 1 {
+                    let first = &value.stmts[0];
+                    quote!(#first)
+                } else {
+                    quote!(#value)
+                }
+            }
             Self::Punned(ident) => quote!(#ident),
         }
     }
