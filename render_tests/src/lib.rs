@@ -34,7 +34,7 @@ pub fn works_with_raw_ident() {
 #[test]
 pub fn element_ordering() {
     use pretty_assertions::assert_eq;
-    use render::{html, raw};
+    use render::html;
 
     let actual = html! {
       <ul>
