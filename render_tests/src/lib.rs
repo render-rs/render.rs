@@ -5,7 +5,7 @@ fn ui() {
 }
 
 #[test]
-pub fn works_with_dashes() {
+fn works_with_dashes() {
     use pretty_assertions::assert_eq;
 
     let value = render::html! { <div data-id={"myid"} /> };
@@ -13,7 +13,7 @@ pub fn works_with_dashes() {
 }
 
 #[test]
-pub fn works_with_raw() {
+fn works_with_raw() {
     use pretty_assertions::assert_eq;
     use render::{html, raw};
 
@@ -25,7 +25,7 @@ pub fn works_with_raw() {
 }
 
 #[test]
-pub fn works_with_raw_ident() {
+fn works_with_raw_ident() {
     use pretty_assertions::assert_eq;
 
     let actual = render::html! {
@@ -36,7 +36,7 @@ pub fn works_with_raw_ident() {
 }
 
 #[test]
-pub fn element_ordering() {
+fn element_ordering() {
     use pretty_assertions::assert_eq;
     use render::html;
 
