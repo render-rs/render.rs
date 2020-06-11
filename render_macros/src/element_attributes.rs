@@ -57,7 +57,7 @@ impl ElementAttributes {
 impl Parse for ElementAttributes {
     fn parse(input: ParseStream) -> Result<Self> {
         let mut attributes: HashSet<ElementAttribute> = HashSet::new();
-        while input.peek(syn::Ident) {
+        while input.peek(syn::Ident::peek_any) {
             let attribute = input.parse::<ElementAttribute>()?;
             let ident = attribute.ident();
             if attributes.contains(&attribute) {
