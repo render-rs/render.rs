@@ -1,0 +1,5 @@
+error: Expected closing tag for: <li>
+  --> $DIR/unclosed-tag-complex.rs:11:11
+   |
+11 |         </ul>
+   |           ^^

@@ -1,4 +1,8 @@
-#![feature(proc_macro_hygiene)]
+#[test]
+fn ui() {
+    let t = trybuild::TestCases::new();
+    t.compile_fail("ui/fail/*.rs");
+}
 
 #[test]
 pub fn works_with_dashes() {
