@@ -68,6 +68,27 @@ pub fn element_ordering() {
     );
 }
 
+#[test]
+fn some_none() {
+    use pretty_assertions::assert_eq;
+    use render::{component, html, rsx};
+
+    #[component]
+    fn Answer(a: i8) {
+        rsx! {
+          <>
+            {match a {
+              42 => Some("Yes"),
+              _ => None,
+            }}
+          </>
+        }
+    }
+
+    assert_eq!(html! { <Answer a={42} /> }, "Yes");
+    assert_eq!(html! { <Answer a={44} /> }, "");
+}
+
 mod kaki {
     // A simple HTML 5 doctype declaration
     use render::html::HTML5Doctype;
