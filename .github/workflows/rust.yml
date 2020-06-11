@@ -1,11 +1,5 @@
 name: Rust
-
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-
+on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,18 +7,11 @@ jobs:
     - uses: hecrj/setup-rust-action@v1
       with:
         rust-version: beta
+        components: rustfmt
     - uses: actions/checkout@v1
     - name: Build
       run: cargo build --verbose
-    - name: Run tests
+    - name: Test
       run: cargo test --verbose
-  fmt:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: nightly
-        components: rustfmt
-    - uses: actions/checkout@v1
-    - name: cargo fmt
+    - name: Format
       run: cargo fmt -- --check
