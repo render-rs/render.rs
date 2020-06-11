@@ -61,6 +61,26 @@ pub fn element_ordering() {
     assert_eq!(deep, "<div><h1>A list</h1><hr/><ul><li>1</li><li>2</li><li>3</li></ul></div>");
 }
 
+#[test]
+fn owned_string() {
+    use pretty_assertions::assert_eq;
+    use render::{component, html, rsx};
+
+    #[component]
+    fn Welcome<'kind, 'name>(kind: &'kind str, name: &'name str) {
+        rsx! {
+            <h1 class={format!("{}-title", kind)}>
+                {format!("Hello, {}", name)}
+            </h1>
+        }
+    }
+
+    assert_eq!(
+        html! { <Welcome kind={"alien"} name={"Yoda"} /> },
+        r#"<h1 class="alien-title">Hello, Yoda</h1>"#
+    );
+}
+
 mod kaki {
     // A simple HTML 5 doctype declaration
     use render::html::HTML5Doctype;
