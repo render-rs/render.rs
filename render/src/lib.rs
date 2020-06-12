@@ -35,12 +35,12 @@
 //! ## Simple HTML rendering
 //!
 //! In order to render a simple HTML fragment into a `String`, use the `rsx!` macro to generate a
-//! component tree, and call `render` on it:
+//! component tree, and call `render_to_string` on it:
 //!
 //! ```rust
 //! # use pretty_assertions::assert_eq;
 //!
-//! use render::{rsx, Render};
+//! use render::{rsx, Render, render_to_string};
 //!
 //! let tree = rsx! {
 //!   <div>
@@ -49,7 +49,7 @@
 //!   </div>
 //! };
 //!
-//! assert_eq!(tree.render(), "<div><h1>Hello!</h1><p>Hello world!</p></div>");
+//! assert_eq!(render_to_string(tree), "<div><h1>Hello!</h1><p>Hello world!</p></div>");
 //! ```
 //!
 //! Because this is so common, there's another macro called `html!` that calls `rsx!` to generate
@@ -171,6 +171,7 @@ mod render;
 mod simple_element;
 mod text_element;
 
+pub use self::render::render_to_string;
 pub use self::render::Render;
 pub use fragment::Fragment;
 pub use render_macros::{component, html, rsx};

@@ -113,7 +113,7 @@ use syn::parse_macro_input;
 #[proc_macro_error]
 pub fn html(input: TokenStream) -> TokenStream {
     let el = proc_macro2::TokenStream::from(rsx(input));
-    let result = quote! { ::render::Render::render(#el) };
+    let result = quote! { ::render::render_to_string(#el) };
     TokenStream::from(result)
 }
 

@@ -38,14 +38,14 @@ mod tests {
     #[test]
     fn decodes_html() {
         use pretty_assertions::assert_eq;
-        let rendered = "<Hello />".render();
+        let rendered = crate::render_to_string("<Hello />");
         assert_eq!(rendered, "&lt;Hello /&gt;");
     }
 
     #[test]
     fn allows_raw_text() {
         use pretty_assertions::assert_eq;
-        let rendered = Raw::from("<Hello />").render();
+        let rendered = crate::render_to_string(Raw::from("<Hello />"));
         assert_eq!(rendered, "<Hello />");
     }
 }

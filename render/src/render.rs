@@ -1,19 +1,19 @@
 use std::fmt::{Result, Write};
 
+/// Render the component to string
+pub fn render_to_string<R: Render>(el: R) -> String {
+    let mut buf = String::new();
+    el.render_into(&mut buf).unwrap();
+    buf
+}
+
 /// Render a component
 ///
 /// This is the underlying mechanism of the `#[component]` macro
-pub trait Render: Sized {
+pub trait Render {
     /// Render the component to a writer.
     /// Make sure you escape html correctly using the `render::html_escaping` module
     fn render_into<W: Write>(self, writer: &mut W) -> Result;
-
-    /// Render the component to string
-    fn render(self) -> String {
-        let mut buf = String::new();
-        self.render_into(&mut buf).unwrap();
-        buf
-    }
 }
 
 /// Does nothing
