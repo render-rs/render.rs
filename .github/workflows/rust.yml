@@ -10,8 +10,8 @@ jobs:
         components: rustfmt
     - uses: actions/checkout@v1
     - name: Build
-      run: cargo build --verbose
+      run: cargo build
     - name: Test
-      run: cargo test --verbose
+      run: cargo test
     - name: Format
       run: cargo fmt -- --check
