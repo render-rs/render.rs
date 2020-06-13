@@ -1,7 +1,7 @@
 //! HTML utilities
 
 use crate::Render;
-use std::fmt::{Result, Write};
+use std::io::{Result, Write};
 
 /// HTML 5 doctype declaration
 ///
@@ -24,7 +24,8 @@ use std::fmt::{Result, Write};
 pub struct HTML5Doctype;
 
 impl Render for HTML5Doctype {
-    fn render_into<W: Write>(self, writer: &mut W) -> Result {
-        write!(writer, "<!DOCTYPE html>")
+    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
+        write!(writer, "<!DOCTYPE html>")?;
+        Ok(())
     }
 }

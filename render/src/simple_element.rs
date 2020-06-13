@@ -1,7 +1,7 @@
 use crate::html_escaping::escape_html;
 use crate::Render;
 use std::collections::HashMap;
-use std::fmt::{Result, Write};
+use std::io::{Result, Write};
 
 type Attributes<'a> = Option<HashMap<&'a str, &'a str>>;
 
@@ -14,7 +14,7 @@ pub struct SimpleElement<'a, T: Render> {
     pub contents: Option<T>,
 }
 
-fn write_attributes<'a, W: Write>(maybe_attributes: Attributes<'a>, writer: &mut W) -> Result {
+fn write_attributes<'a, W: Write>(maybe_attributes: Attributes<'a>, writer: &mut W) -> Result<()> {
     match maybe_attributes {
         None => Ok(()),
         Some(mut attributes) => {
@@ -29,7 +29,7 @@ fn write_attributes<'a, W: Write>(maybe_attributes: Attributes<'a>, writer: &mut
 }
 
 impl<T: Render> Render for SimpleElement<'_, T> {
-    fn render_into<W: Write>(self, writer: &mut W) -> Result {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result<()> {
         match self.contents {
             None => {
                 write!(writer, "<{}", self.tag_name)?;
