@@ -1,5 +1,6 @@
 use quote::quote;
 use std::hash::{Hash, Hasher};
+use syn::ext::IdentExt;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::spanned::Spanned;
 
@@ -93,7 +94,7 @@ impl Hash for ElementAttribute {
 
 impl Parse for ElementAttribute {
     fn parse(input: ParseStream) -> Result<Self> {
-        let name = AttributeKey::parse_separated_nonempty(input)?;
+        let name = AttributeKey::parse_separated_nonempty_with(input, syn::Ident::parse_any)?;
         let not_punned = input.peek(syn::Token![=]);
 
         if !not_punned {

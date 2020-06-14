@@ -36,6 +36,15 @@ fn works_with_raw_ident() {
 }
 
 #[test]
+fn works_with_keywords() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+
+    assert_eq!(html! { <input type={"text"} /> }, r#"<input type="text"/>"#);
+    assert_eq!(html! { <label for={"me"} /> }, r#"<label for="me"/>"#);
+}
+
+#[test]
 fn element_ordering() {
     use pretty_assertions::assert_eq;
     use render::html;
