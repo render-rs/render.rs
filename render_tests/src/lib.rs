@@ -1,3 +1,8 @@
+#[cfg(test)]
+use pretty_assertions::assert_eq;
+#[cfg(test)]
+use render::{component, html, raw, rsx};
+
 #[test]
 fn ui() {
     let t = trybuild::TestCases::new();
@@ -6,17 +11,12 @@ fn ui() {
 
 #[test]
 fn works_with_dashes() {
-    use pretty_assertions::assert_eq;
-
-    let value = render::html! { <div data-id={"myid"} /> };
+    let value = html! { <div data-id={"myid"} /> };
     assert_eq!(value, r#"<div data-id="myid"/>"#);
 }
 
 #[test]
 fn works_with_raw() {
-    use pretty_assertions::assert_eq;
-    use render::{html, raw};
-
     let actual = html! {
         <div>{raw!("<Hello />")}</div>
     };
@@ -26,9 +26,7 @@ fn works_with_raw() {
 
 #[test]
 fn works_with_raw_ident() {
-    use pretty_assertions::assert_eq;
-
-    let actual = render::html! {
+    let actual = html! {
         <input r#type={"text"} />
     };
 
@@ -37,18 +35,12 @@ fn works_with_raw_ident() {
 
 #[test]
 fn works_with_keywords() {
-    use pretty_assertions::assert_eq;
-    use render::html;
-
     assert_eq!(html! { <input type={"text"} /> }, r#"<input type="text"/>"#);
     assert_eq!(html! { <label for={"me"} /> }, r#"<label for="me"/>"#);
 }
 
 #[test]
 fn element_ordering() {
-    use pretty_assertions::assert_eq;
-    use render::html;
-
     let actual = html! {
       <ul>
         <li>{"1"}</li>
@@ -79,9 +71,6 @@ fn element_ordering() {
 
 #[test]
 fn some_none() {
-    use pretty_assertions::assert_eq;
-    use render::{component, html, rsx};
-
     #[component]
     fn Answer(a: i8) {
         rsx! {
