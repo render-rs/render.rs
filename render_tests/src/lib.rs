@@ -1,7 +1,7 @@
 #[cfg(test)]
 use pretty_assertions::assert_eq;
 #[cfg(test)]
-use render::{component, html, raw, rsx};
+use render::{component, html, raw, rsx, Render};
 
 #[test]
 fn ui() {
@@ -106,6 +106,21 @@ fn attrs_custom_element() {
     assert_eq!(html! { <Link href /> }, r#"<a href="/">Go</a>"#);
     assert_eq!(html! { <Link href={href} /> }, r#"<a href="/">Go</a>"#);
     assert_eq!(html! { <Link href="/" /> }, r#"<a href="/">Go</a>"#);
+}
+
+#[test]
+fn raw_children() {
+    #[component]
+    fn Link<C: Render>(children: C) {
+        rsx! { <a>{children}</a> }
+    }
+
+    let go = "Go";
+    assert_eq!(html! { <Link>{go}</Link> }, r#"<a>Go</a>"#);
+    assert_eq!(
+        html! { <Link>Go with the flow.</Link> },
+        r#"<a>Go with the flow.</a>"#,
+    );
 }
 
 mod kaki {
