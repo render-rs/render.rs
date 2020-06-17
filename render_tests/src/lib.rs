@@ -87,6 +87,27 @@ fn some_none() {
     assert_eq!(html! { <Answer a={44} /> }, "");
 }
 
+#[test]
+fn attrs_simple_element() {
+    let f = "f";
+    assert_eq!(html! { <a f /> }, r#"<a f="f"/>"#);
+    assert_eq!(html! { <a class={f} /> }, r#"<a class="f"/>"#);
+    assert_eq!(html! { <a class="f" /> }, r#"<a class="f"/>"#);
+}
+
+#[test]
+fn attrs_custom_element() {
+    #[component]
+    fn Link<'href>(href: &'href str) {
+        rsx! { <a href>{"Go"}</a> }
+    }
+
+    let href = "/";
+    assert_eq!(html! { <Link href /> }, r#"<a href="/">Go</a>"#);
+    assert_eq!(html! { <Link href={href} /> }, r#"<a href="/">Go</a>"#);
+    assert_eq!(html! { <Link href="/" /> }, r#"<a href="/">Go</a>"#);
+}
+
 mod kaki {
     // A simple HTML 5 doctype declaration
     use render::html::HTML5Doctype;

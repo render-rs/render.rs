@@ -8,13 +8,16 @@ pub type AttributeKey = syn::punctuated::Punctuated<syn::Ident, syn::Token![-]>;
 
 pub enum ElementAttribute {
     Punned(AttributeKey),
-    WithValue(AttributeKey, syn::Block),
+    WithBlock(AttributeKey, syn::Block),
+    WithLiteral(AttributeKey, syn::LitStr),
 }
 
 impl ElementAttribute {
     pub fn ident(&self) -> &AttributeKey {
         match self {
-            Self::Punned(ident) | Self::WithValue(ident, _) => ident,
+            Self::Punned(i) => i,
+            Self::WithBlock(i, _) => i,
+            Self::WithLiteral(i, _) => i,
         }
     }
 
@@ -24,7 +27,7 @@ impl ElementAttribute {
 
     pub fn value_tokens(&self) -> proc_macro2::TokenStream {
         match self {
-            Self::WithValue(_, value) => {
+            Self::WithBlock(_, value) => {
                 if value.stmts.len() == 1 {
                     let first = &value.stmts[0];
                     quote!(#first)
@@ -32,6 +35,7 @@ impl ElementAttribute {
                     quote!(#value)
                 }
             }
+            Self::WithLiteral(_, value) => quote!(#value),
             Self::Punned(ident) => quote!(#ident),
         }
     }
@@ -102,8 +106,12 @@ impl Parse for ElementAttribute {
         }
 
         input.parse::<syn::Token![=]>()?;
-        let value = input.parse::<syn::Block>()?;
 
-        Ok(Self::WithValue(name, value))
+        if let Ok(lit) = input.parse::<syn::LitStr>() {
+            return Ok(Self::WithLiteral(name, lit));
+        }
+
+        let value = input.parse::<syn::Block>()?;
+        Ok(Self::WithBlock(name, value))
     }
 }
