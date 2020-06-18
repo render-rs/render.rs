@@ -98,6 +98,26 @@ fn some_none() {
     assert_eq!(html! { <Answer a={44} /> }, "");
 }
 
+#[test]
+fn owned_string() {
+    use pretty_assertions::assert_eq;
+    use render::{component, html, rsx};
+
+    #[component]
+    fn Welcome<'kind, 'name>(kind: &'kind str, name: &'name str) {
+        rsx! {
+            <h1 class={format!("{}-title", kind)}>
+                {format!("Hello, {}", name)}
+            </h1>
+        }
+    }
+
+    assert_eq!(
+        html! { <Welcome kind={"alien"} name={"Yoda"} /> },
+        r#"<h1 class="alien-title">Hello, Yoda</h1>"#
+    );
+}
+
 mod kaki {
     // A simple HTML 5 doctype declaration
     use render::html::HTML5Doctype;
