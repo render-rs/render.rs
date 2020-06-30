@@ -167,6 +167,7 @@
 pub mod fragment;
 pub mod html;
 pub mod html_escaping;
+mod numbers;
 mod render;
 mod simple_element;
 mod text_element;
