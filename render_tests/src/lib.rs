@@ -118,6 +118,16 @@ fn owned_string() {
     );
 }
 
+#[test]
+fn number() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+
+    let num = 42;
+
+    assert_eq!(html! { <p>{num}</p> }, "<p>42</p>")
+}
+
 mod kaki {
     // A simple HTML 5 doctype declaration
     use render::html::HTML5Doctype;
