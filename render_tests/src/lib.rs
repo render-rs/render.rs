@@ -119,6 +119,27 @@ fn owned_string() {
 }
 
 #[test]
+fn cow_str() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+    use std::borrow::Cow;
+
+    let owned1 = "Borrowed from owned".to_owned();
+    let owned2 = "Owned".to_owned();
+
+    assert_eq!(
+        html! {
+            <div>
+                <p>{Cow::Borrowed("Static")}</p>
+                <p>{Cow::<'_, str>::Borrowed(&owned1)}</p>
+                <p>{Cow::<'_, str>::Owned(owned2)}</p>
+            </div>
+        },
+        r#"<div><p>Static</p><p>Borrowed from owned</p><p>Owned</p></div>"#,
+    );
+}
+
+#[test]
 fn number() {
     use pretty_assertions::assert_eq;
     use render::html;
