@@ -128,6 +128,28 @@ fn number() {
     assert_eq!(html! { <p>{num}</p> }, "<p>42</p>")
 }
 
+#[test]
+fn vec() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+
+    let list = vec!["Mouse", "Rat", "Hamster"];
+
+    assert_eq!(
+        html! {
+            <ul>
+                {
+                    list
+                        .into_iter()
+                        .map(|text| render::rsx! { <li>{text}</li> })
+                        .collect::<Vec<_>>()
+                }
+            </ul>
+        },
+        "<ul><li>Mouse</li><li>Rat</li><li>Hamster</li></ul>"
+    )
+}
+
 mod kaki {
     // A simple HTML 5 doctype declaration
     use render::html::HTML5Doctype;
