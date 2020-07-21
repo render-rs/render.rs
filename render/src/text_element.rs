@@ -14,6 +14,12 @@ impl Render for &str {
     }
 }
 
+impl Render for std::borrow::Cow<'_, str> {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result {
+        escape_html(&self, writer)
+    }
+}
+
 /// A raw (unencoded) html string
 #[derive(Debug)]
 pub struct Raw<'s>(&'s str);
