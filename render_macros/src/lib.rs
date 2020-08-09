@@ -1,5 +1,3 @@
-#![feature(proc_macro_diagnostic)]
-
 extern crate proc_macro;
 
 mod child;
@@ -12,6 +10,7 @@ mod tags;
 
 use element::Element;
 use proc_macro::TokenStream;
+use proc_macro_error::proc_macro_error;
 use quote::quote;
 use syn::parse_macro_input;
 
@@ -22,7 +21,6 @@ use syn::parse_macro_input;
 /// ### Simple HTML elements start with a lowercase
 ///
 /// ```rust
-/// # #![feature(proc_macro_hygiene)]
 /// # use pretty_assertions::assert_eq;
 /// # use render_macros::html;
 /// let rendered = html! { <div id={"main"}>{"Hello"}</div> };
@@ -32,7 +30,6 @@ use syn::parse_macro_input;
 /// ### Custom components start with an uppercase
 ///
 /// ```rust
-/// # #![feature(proc_macro_hygiene)]
 /// # use pretty_assertions::assert_eq;
 /// # use render_macros::{html, rsx};
 /// use render::Render;
@@ -54,7 +51,6 @@ use syn::parse_macro_input;
 /// ### Values are always surrounded by curly braces
 ///
 /// ```rust
-/// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::html;
 /// # use pretty_assertions::assert_eq;
 /// let rendered = html! {
@@ -67,7 +63,6 @@ use syn::parse_macro_input;
 /// ### HTML entities can accept dashed-separated value
 ///
 /// ```rust
-/// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::html;
 /// # use pretty_assertions::assert_eq;
 /// let rendered = html! {
@@ -80,7 +75,6 @@ use syn::parse_macro_input;
 /// ### Custom components can't accept dashed-separated values
 ///
 /// ```compile_fail
-/// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::html;
 /// // This will fail the compilation:
 /// let rendered = html! {
@@ -93,7 +87,6 @@ use syn::parse_macro_input;
 /// `value={value}` like Rust's punning
 ///
 /// ```rust
-/// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::html;
 /// # use pretty_assertions::assert_eq;
 /// let class = "someclass";
@@ -108,7 +101,6 @@ use syn::parse_macro_input;
 /// ### Punning is not supported for dashed-delimited attributes
 ///
 /// ```compile_fail
-/// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::html;
 ///
 /// let rendered = html! {
@@ -118,6 +110,7 @@ use syn::parse_macro_input;
 /// assert_eq!(rendered, r#"<div class="some_class"/>"#);
 /// ```
 #[proc_macro]
+#[proc_macro_error]
 pub fn html(input: TokenStream) -> TokenStream {
     let el = proc_macro2::TokenStream::from(rsx(input));
     let result = quote! { ::render::Render::render(#el) };
@@ -126,6 +119,7 @@ pub fn html(input: TokenStream) -> TokenStream {
 
 /// Generate a renderable component tree, before rendering it
 #[proc_macro]
+#[proc_macro_error]
 pub fn rsx(input: TokenStream) -> TokenStream {
     let el = parse_macro_input!(input as Element);
     let result = quote! { #el };
@@ -139,7 +133,6 @@ pub fn rsx(input: TokenStream) -> TokenStream {
 /// [`String`](std::string::String):
 ///
 /// ```rust
-/// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::{component, rsx};
 /// #
 /// #[component]
@@ -151,7 +144,6 @@ pub fn rsx(input: TokenStream) -> TokenStream {
 /// Practically, this is exactly the same as using the [Render](../render/trait.Render.html) trait:
 ///
 /// ```rust
-/// # #![feature(proc_macro_hygiene)]
 /// # use render_macros::{component, rsx, html};
 /// # use render::Render;
 /// # use pretty_assertions::assert_eq;
@@ -181,6 +173,7 @@ pub fn rsx(input: TokenStream) -> TokenStream {
 /// # assert_eq!(from_fn, from_struct);
 /// ```
 #[proc_macro_attribute]
+#[proc_macro_error]
 pub fn component(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let f = parse_macro_input!(item as syn::ItemFn);
     function_component::create_function_component(f)

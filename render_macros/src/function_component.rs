@@ -1,4 +1,5 @@
 use proc_macro::TokenStream;
+use proc_macro_error::emit_error;
 use quote::quote;
 use syn::spanned::Spanned;
 
@@ -10,9 +11,7 @@ pub fn create_function_component(f: syn::ItemFn) -> TokenStream {
     let vis = f.vis;
 
     let inputs_block = if inputs.len() > 0 {
-        let input_names: Vec<_> = inputs
-            .iter()
-            .collect();
+        let input_names: Vec<_> = inputs.iter().collect();
 
         quote!({ #(#vis #input_names),* })
     } else {
@@ -27,7 +26,7 @@ pub fn create_function_component(f: syn::ItemFn) -> TokenStream {
             .filter_map(|argument| match argument {
                 syn::FnArg::Typed(typed) => Some(typed),
                 syn::FnArg::Receiver(rec) => {
-                    rec.span().unwrap().error("Don't use `self` on components");
+                    emit_error!(rec.span(), "Don't use `self` on components");
                     None
                 }
             })

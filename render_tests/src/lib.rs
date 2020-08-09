@@ -1,7 +1,11 @@
-#![feature(proc_macro_hygiene)]
+#[test]
+fn ui() {
+    let t = trybuild::TestCases::new();
+    t.compile_fail("ui/fail/*.rs");
+}
 
 #[test]
-pub fn works_with_dashes() {
+fn works_with_dashes() {
     use pretty_assertions::assert_eq;
 
     let value = render::html! { <div data-id={"myid"} /> };
@@ -9,7 +13,7 @@ pub fn works_with_dashes() {
 }
 
 #[test]
-pub fn works_with_raw() {
+fn works_with_raw() {
     use pretty_assertions::assert_eq;
     use render::{html, raw};
 
@@ -21,9 +25,29 @@ pub fn works_with_raw() {
 }
 
 #[test]
-pub fn element_ordering() {
-  use pretty_assertions::assert_eq;
-    use render::{html, raw};
+fn works_with_raw_ident() {
+    use pretty_assertions::assert_eq;
+
+    let actual = render::html! {
+        <input r#type={"text"} />
+    };
+
+    assert_eq!(actual, r#"<input type="text"/>"#);
+}
+
+#[test]
+fn works_with_keywords() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+
+    assert_eq!(html! { <input type={"text"} /> }, r#"<input type="text"/>"#);
+    assert_eq!(html! { <label for={"me"} /> }, r#"<label for="me"/>"#);
+}
+
+#[test]
+fn element_ordering() {
+    use pretty_assertions::assert_eq;
+    use render::html;
 
     let actual = html! {
       <ul>
@@ -47,7 +71,104 @@ pub fn element_ordering() {
       </div>
     };
 
-    assert_eq!(deep, "<div><h1>A list</h1><hr/><ul><li>1</li><li>2</li><li>3</li></ul></div>");
+    assert_eq!(
+        deep,
+        "<div><h1>A list</h1><hr/><ul><li>1</li><li>2</li><li>3</li></ul></div>"
+    );
+}
+
+#[test]
+fn some_none() {
+    use pretty_assertions::assert_eq;
+    use render::{component, html, rsx};
+
+    #[component]
+    fn Answer(a: i8) {
+        rsx! {
+          <>
+            {match a {
+              42 => Some("Yes"),
+              _ => None,
+            }}
+          </>
+        }
+    }
+
+    assert_eq!(html! { <Answer a={42} /> }, "Yes");
+    assert_eq!(html! { <Answer a={44} /> }, "");
+}
+
+#[test]
+fn owned_string() {
+    use pretty_assertions::assert_eq;
+    use render::{component, html, rsx};
+
+    #[component]
+    fn Welcome<'kind, 'name>(kind: &'kind str, name: &'name str) {
+        rsx! {
+            <h1 class={format!("{}-title", kind)}>
+                {format!("Hello, {}", name)}
+            </h1>
+        }
+    }
+
+    assert_eq!(
+        html! { <Welcome kind={"alien"} name={"Yoda"} /> },
+        r#"<h1 class="alien-title">Hello, Yoda</h1>"#
+    );
+}
+
+#[test]
+fn cow_str() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+    use std::borrow::Cow;
+
+    let owned1 = "Borrowed from owned".to_owned();
+    let owned2 = "Owned".to_owned();
+
+    assert_eq!(
+        html! {
+            <div>
+                <p>{Cow::Borrowed("Static")}</p>
+                <p>{Cow::<'_, str>::Borrowed(&owned1)}</p>
+                <p>{Cow::<'_, str>::Owned(owned2)}</p>
+            </div>
+        },
+        r#"<div><p>Static</p><p>Borrowed from owned</p><p>Owned</p></div>"#,
+    );
+}
+
+#[test]
+fn number() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+
+    let num = 42;
+
+    assert_eq!(html! { <p>{num}</p> }, "<p>42</p>")
+}
+
+#[test]
+fn vec() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+
+    let list = vec!["Mouse", "Rat", "Hamster"];
+
+    assert_eq!(
+        html! {
+            <ul>
+                {
+                    list
+                        .into_iter()
+                        .map(|text| render::rsx! { <li>{text}</li> })
+                        .collect::<Vec<_>>()
+                }
+            </ul>
+        },
+        "<ul><li>Mouse</li><li>Rat</li><li>Hamster</li></ul>"
+    )
 }
 
 mod kaki {
@@ -100,8 +221,8 @@ mod kaki {
 
     #[test]
     fn externals_test() {
-        use pretty_assertions::assert_eq;
         use crate::other::ExternalPage;
+        use pretty_assertions::assert_eq;
 
         let actual = render::html! {
           <ExternalPage title={"Home"} subtitle={"Foo"}>
@@ -120,6 +241,35 @@ mod kaki {
             "</html>"
         );
         assert_eq!(actual, expected);
+    }
+}
+
+/// ## Other
+///
+/// Module for testing component visibility when imported from other modules.
+
+mod other {
+    use render::html::HTML5Doctype;
+    use render::{component, rsx, Render};
+
+    #[component]
+    pub fn ExternalPage<'title, 'subtitle, Children: Render>(
+        title: &'title str,
+        subtitle: &'subtitle str,
+        children: Children,
+    ) {
+        rsx! {
+            <>
+              <HTML5Doctype />
+              <html>
+                <head><title>{title}</title></head>
+                <body>
+                  <h1>{subtitle}</h1>
+                  {children}
+                </body>
+              </html>
+            </>
+        }
     }
 }
 

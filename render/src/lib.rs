@@ -32,21 +32,12 @@
 //!
 //! # Usage
 //!
-//! > Note: `render` needs the `nightly` Rust compiler, for now, so it will have hygienic macros.
-//!
-//! This means you will need to add the following feature flag in the root of your `lib.rs`/`main.rs`:
-//!
-//! ```rust
-//! #![feature(proc_macro_hygiene)]
-//! ```
-//!
 //! ## Simple HTML rendering
 //!
 //! In order to render a simple HTML fragment into a `String`, use the `rsx!` macro to generate a
 //! component tree, and call `render` on it:
 //!
 //! ```rust
-//! #![feature(proc_macro_hygiene)]
 //! # use pretty_assertions::assert_eq;
 //!
 //! use render::{rsx, Render};
@@ -71,7 +62,6 @@
 //! string:
 //!
 //! ```rust
-//! #![feature(proc_macro_hygiene)]
 //! # use pretty_assertions::assert_eq;
 //!
 //! use render::{html, raw};
@@ -95,7 +85,6 @@
 //! macro, which generates a `Render` component tree:
 //!
 //! ```rust
-//! #![feature(proc_macro_hygiene)]
 //! # use pretty_assertions::assert_eq;
 //!
 //! use render::{component, rsx, html};
@@ -122,8 +111,6 @@
 //! ### Full example
 //!
 //! ```rust
-//! #![feature(proc_macro_hygiene)]
-//!
 //! // A simple HTML 5 doctype declaration
 //! use render::html::HTML5Doctype;
 //! use render::{
@@ -177,11 +164,10 @@
 //! # assert_eq!(actual, expected);
 //! ```
 
-#![feature(proc_macro_hygiene)]
-
 pub mod fragment;
 pub mod html;
 pub mod html_escaping;
+mod numbers;
 mod render;
 mod simple_element;
 mod text_element;

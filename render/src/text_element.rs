@@ -1,6 +1,6 @@
+use crate::html_escaping::escape_html;
 use crate::Render;
 use std::fmt::{Result, Write};
-use crate::html_escaping::escape_html;
 
 impl Render for String {
     fn render_into<W: Write>(self, writer: &mut W) -> Result {
@@ -11,6 +11,12 @@ impl Render for String {
 impl Render for &str {
     fn render_into<W: Write>(self, writer: &mut W) -> Result {
         escape_html(self, writer)
+    }
+}
+
+impl Render for std::borrow::Cow<'_, str> {
+    fn render_into<W: Write>(self, writer: &mut W) -> Result {
+        escape_html(&self, writer)
     }
 }
 

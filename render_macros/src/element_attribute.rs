@@ -1,5 +1,6 @@
 use quote::quote;
 use std::hash::{Hash, Hasher};
+use syn::ext::IdentExt;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::spanned::Spanned;
 
@@ -23,7 +24,14 @@ impl ElementAttribute {
 
     pub fn value_tokens(&self) -> proc_macro2::TokenStream {
         match self {
-            Self::WithValue(_, value) => quote!(#value),
+            Self::WithValue(_, value) => {
+                if value.stmts.len() == 1 {
+                    let first = &value.stmts[0];
+                    quote!(#first)
+                } else {
+                    quote!(#value)
+                }
+            }
             Self::Punned(ident) => quote!(#ident),
         }
     }
@@ -86,7 +94,7 @@ impl Hash for ElementAttribute {
 
 impl Parse for ElementAttribute {
     fn parse(input: ParseStream) -> Result<Self> {
-        let name = AttributeKey::parse_separated_nonempty(input)?;
+        let name = AttributeKey::parse_separated_nonempty_with(input, syn::Ident::parse_any)?;
         let not_punned = input.peek(syn::Token![=]);
 
         if !not_punned {

@@ -7,7 +7,6 @@ use std::fmt::{Result, Write};
 /// in a RSX fashion
 ///
 /// ```rust
-/// # #![feature(proc_macro_hygiene)]
 /// # use pretty_assertions::assert_eq;
 /// # use render_macros::html;
 /// let result = html! {

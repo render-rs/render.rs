@@ -1,7 +1,9 @@
 use crate::children::Children;
 use crate::element_attribute::ElementAttribute;
+use proc_macro_error::emit_error;
 use quote::{quote, ToTokens};
 use std::collections::HashSet;
+use syn::ext::IdentExt;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::spanned::Spanned;
 
@@ -42,7 +44,7 @@ impl ElementAttributes {
             .filter_map(|attribute| match attribute.validate(is_custom_element) {
                 Ok(x) => Some(x),
                 Err(err) => {
-                    err.span().unwrap().error(err.to_string()).emit();
+                    emit_error!(err.span(), "Invalid attribute: {}", err);
                     None
                 }
             })
@@ -55,15 +57,15 @@ impl ElementAttributes {
 impl Parse for ElementAttributes {
     fn parse(input: ParseStream) -> Result<Self> {
         let mut attributes: HashSet<ElementAttribute> = HashSet::new();
-        while input.peek(syn::Ident) {
+        while input.peek(syn::Ident::peek_any) {
             let attribute = input.parse::<ElementAttribute>()?;
             let ident = attribute.ident();
             if attributes.contains(&attribute) {
-                let error_message = format!(
+                emit_error!(
+                    ident.span(),
                     "There is a previous definition of the {} attribute",
                     quote!(#ident)
                 );
-                ident.span().unwrap().warning(error_message).emit();
             }
             attributes.insert(attribute);
         }
@@ -122,20 +124,20 @@ impl<'a> ToTokens for SimpleElementAttributes<'a> {
                 .iter()
                 .map(|attribute| {
                     let mut iter = attribute.ident().iter();
-                    let first_word = iter.next().unwrap();
+                    let first_word = iter.next().unwrap().unraw();
                     let ident = iter.fold(first_word.to_string(), |acc, curr| {
-                        format!("{}-{}", acc, curr)
+                        format!("{}-{}", acc, curr.unraw())
                     });
                     let value = attribute.value_tokens();
 
                     quote! {
-                        hm.insert(#ident, #value);
+                        hm.insert(#ident, ::std::borrow::Cow::from(#value));
                     }
                 })
                 .collect();
 
             let hashmap_declaration = quote! {{
-                let mut hm = std::collections::HashMap::<&str, &str>::new();
+                let mut hm = std::collections::HashMap::<&str, ::std::borrow::Cow<'_, str>>::new();
                 #(#attrs)*
                 Some(hm)
             }};

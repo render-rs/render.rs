@@ -30,7 +30,6 @@ impl Children {
             1 => quote! { Some(#(#children_quotes),*) },
             _ => {
                 let mut iter = children_quotes.iter();
-                
                 let first = iter.next().unwrap();
                 let second = iter.next().unwrap();
 

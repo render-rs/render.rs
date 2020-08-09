@@ -1,0 +1,7 @@
+error[E0560]: struct `Heading<'_>` has no field named `t`
+ --> $DIR/unexpected-attribute.rs:9:22
+  |
+9 |     html! { <Heading t={"Hello world!"} /> };
+  |                      ^ `Heading<'_>` does not have this field
+  |
+  = note: available fields are: `title`
