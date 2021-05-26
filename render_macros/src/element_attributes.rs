@@ -123,10 +123,17 @@ impl<'a> ToTokens for SimpleElementAttributes<'a> {
                 .attributes
                 .iter()
                 .map(|attribute| {
-                    let mut iter = attribute.ident().iter();
-                    let first_word = iter.next().unwrap().unraw();
-                    let ident = iter.fold(first_word.to_string(), |acc, curr| {
-                        format!("{}-{}", acc, curr.unraw())
+                    let mut iter = attribute.ident().pairs();
+                    let ident = iter.fold("".to_string(), |acc, curr| {
+                        format!(
+                            "{}{}{}",
+                            acc,
+                            curr.value(),
+                            match curr.punct() {
+                                Some(p) => p.as_char().to_string(),
+                                None => "".to_string(),
+                            }
+                        )
                     });
                     let value = attribute.value_tokens();
 
