@@ -3,13 +3,16 @@ use std::fmt::{Result, Write};
 /// Render a component
 ///
 /// This is the underlying mechanism of the `#[component]` macro
-pub trait Render: Sized {
+pub trait Render {
     /// Render the component to a writer.
     /// Make sure you escape html correctly using the `render::html_escaping` module
     fn render_into<W: Write>(self, writer: &mut W) -> Result;
 
     /// Render the component to string
-    fn render(self) -> String {
+    fn render(self) -> String
+    where
+        Self: Sized,
+    {
         let mut buf = String::new();
         self.render_into(&mut buf).unwrap();
         buf
