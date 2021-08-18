@@ -4,6 +4,7 @@ use crate::tags::{ClosingTag, OpenTag};
 use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream, Result};
 
+#[derive(Clone)]
 pub struct Element {
     name: syn::Path,
     attributes: ElementAttributes,

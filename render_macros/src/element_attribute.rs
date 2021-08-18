@@ -4,8 +4,9 @@ use syn::ext::IdentExt;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::spanned::Spanned;
 
-pub type AttributeKey = syn::punctuated::Punctuated<syn::Ident, syn::Token![-]>;
+pub type AttributeKey = syn::punctuated::Punctuated<proc_macro2::Ident, proc_macro2::Punct>;
 
+#[derive(Clone)]
 pub enum ElementAttribute {
     Punned(AttributeKey),
     WithValue(AttributeKey, syn::Block),
@@ -94,14 +95,41 @@ impl Hash for ElementAttribute {
 
 impl Parse for ElementAttribute {
     fn parse(input: ParseStream) -> Result<Self> {
-        let name = AttributeKey::parse_separated_nonempty_with(input, syn::Ident::parse_any)?;
-        let not_punned = input.peek(syn::Token![=]);
+        let mut name: syn::punctuated::Punctuated<proc_macro2::Ident, proc_macro2::Punct> =
+            syn::punctuated::Punctuated::new();
+
+        // Parse the input up to the space
+        loop {
+            let value = syn::Ident::parse_any(&input).unwrap();
+            name.push_value(value);
+
+            if input.peek(syn::Token![=]) {
+                break;
+            }
+
+            let punct = input.parse().unwrap();
+            name.push_punct(punct);
+        }
+
+        // Peak for incoming equals to check if its punned
+        let mut not_punned = input.peek(syn::Token![=]);
+
+        if !not_punned {
+            not_punned = input.peek2(syn::Token![=]);
+        }
+
+        if !not_punned {
+            not_punned = input.peek3(syn::Token![=]);
+        }
 
         if !not_punned {
             return Ok(Self::Punned(name));
         }
 
+        // Parse equals
         input.parse::<syn::Token![=]>()?;
+
+        // Parse body
         let value = input.parse::<syn::Block>()?;
 
         Ok(Self::WithValue(name, value))

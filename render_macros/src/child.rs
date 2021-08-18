@@ -2,6 +2,7 @@ use crate::element::Element;
 use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream, Result};
 
+#[derive(Clone)]
 pub enum Child {
     Element(Element),
     RawBlock(syn::Block),
