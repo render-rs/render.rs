@@ -2,7 +2,7 @@ use crate::child::Child;
 use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream, Result};
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Children {
     pub nodes: Vec<Child>,
 }

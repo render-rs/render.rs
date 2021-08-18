@@ -6,6 +6,7 @@ use syn::spanned::Spanned;
 
 pub type AttributeKey = syn::punctuated::Punctuated<proc_macro2::Ident, proc_macro2::Punct>;
 
+#[derive(Clone)]
 pub enum ElementAttribute {
     Punned(AttributeKey),
     WithValue(AttributeKey, syn::Block),

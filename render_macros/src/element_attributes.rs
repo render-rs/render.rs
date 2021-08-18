@@ -9,7 +9,7 @@ use syn::spanned::Spanned;
 
 pub type Attributes = HashSet<ElementAttribute>;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct ElementAttributes {
     pub attributes: Attributes,
 }
