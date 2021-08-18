@@ -7,7 +7,7 @@ use std::fmt::{Result, Write};
 type Attributes<'a> = Option<HashMap<&'a str, Cow<'a, str>>>;
 
 /// Simple HTML element tag
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SimpleElement<'a, T: Render> {
     /// the HTML tag name, like `html`, `head`, `body`, `link`...
     pub tag_name: &'a str,
