@@ -35,7 +35,17 @@ impl<T: Render> Render for SimpleElement<'_, T> {
             None => {
                 write!(writer, "<{}", self.tag_name)?;
                 write_attributes(self.attributes, writer)?;
-                write!(writer, "/>")
+
+                match self.tag_name {
+                    "area" | "base" | "br" | "col" | "embed" | "hr" | "img" | "input" | "link"
+                    | "meta" | "param" | "source" | "track" | "wbr" => {
+                        // void element, can be self-closing
+                        write!(writer, "/>")
+                    }
+                    _ => {
+                        write!(writer, "></{}>", self.tag_name)
+                    }
+                }
             }
             Some(renderable) => {
                 write!(writer, "<{}", self.tag_name)?;

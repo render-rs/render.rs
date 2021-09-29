@@ -9,7 +9,7 @@ fn works_with_dashes() {
     use pretty_assertions::assert_eq;
 
     let value = render::html! { <div data-id={"myid"} /> };
-    assert_eq!(value, r#"<div data-id="myid"/>"#);
+    assert_eq!(value, r#"<div data-id="myid"></div>"#);
 }
 
 #[test]
@@ -41,7 +41,18 @@ fn works_with_keywords() {
     use render::html;
 
     assert_eq!(html! { <input type={"text"} /> }, r#"<input type="text"/>"#);
-    assert_eq!(html! { <label for={"me"} /> }, r#"<label for="me"/>"#);
+    assert_eq!(
+        html! { <label for={"me"} /> },
+        r#"<label for="me"></label>"#
+    );
+}
+
+#[test]
+fn selfclosing_void_element() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+
+    assert_eq!(html! { <hr /> }, r#"<hr/>"#);
 }
 
 #[test]

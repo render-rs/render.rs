@@ -57,7 +57,7 @@ use syn::parse_macro_input;
 ///     <div id={"main"} />
 /// };
 ///
-/// assert_eq!(rendered, r#"<div id="main"/>"#);
+/// assert_eq!(rendered, r#"<div id="main"></div>"#);
 /// ```
 ///
 /// ### HTML entities can accept dashed-separated value
@@ -66,10 +66,10 @@ use syn::parse_macro_input;
 /// # use render_macros::html;
 /// # use pretty_assertions::assert_eq;
 /// let rendered = html! {
-///     <div data-testid={"sometestid"} />
+///     <div data-testid={"sometestid"}></div>
 /// };
 ///
-/// assert_eq!(rendered, r#"<div data-testid="sometestid"/>"#);
+/// assert_eq!(rendered, r#"<div data-testid="sometestid"></div>"#);
 /// ```
 ///
 /// ### Custom components can't accept dashed-separated values
@@ -95,7 +95,7 @@ use syn::parse_macro_input;
 ///     <div class />
 /// };
 ///
-/// assert_eq!(rendered, r#"<div class="someclass"/>"#);
+/// assert_eq!(rendered, r#"<div class="someclass"></div>"#);
 /// ```
 ///
 /// ### Punning is not supported for dashed-delimited attributes
@@ -107,7 +107,7 @@ use syn::parse_macro_input;
 ///     <div this-wont-work />
 /// };
 ///
-/// assert_eq!(rendered, r#"<div class="some_class"/>"#);
+/// assert_eq!(rendered, r#"<div class="some_class"></div>"#);
 /// ```
 #[proc_macro]
 #[proc_macro_error]
