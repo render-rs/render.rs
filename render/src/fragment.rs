@@ -17,7 +17,7 @@ use std::fmt::{Result, Write};
 /// };
 /// assert_eq!(result, "<a/><b/>");
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Fragment<T: Render> {
     pub children: T,
 }
