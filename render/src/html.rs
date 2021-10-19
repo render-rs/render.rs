@@ -20,7 +20,7 @@ use std::fmt::{Result, Write};
 /// };
 /// # assert_eq!(result, "<!DOCTYPE html><html><body/></html>");
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct HTML5Doctype;
 
 impl Render for HTML5Doctype {

@@ -21,7 +21,7 @@ impl Render for std::borrow::Cow<'_, str> {
 }
 
 /// A raw (unencoded) html string
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Raw<'s>(&'s str);
 
 impl<'s> From<&'s str> for Raw<'s> {
