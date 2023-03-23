@@ -22,16 +22,23 @@ impl Render for std::borrow::Cow<'_, str> {
 
 /// A raw (unencoded) html string
 #[derive(Debug)]
-pub struct Raw<'s>(&'s str);
+pub struct Raw(String);
 
-impl<'s> From<&'s str> for Raw<'s> {
-    fn from(s: &'s str) -> Self {
+impl From<&str> for Raw {
+    fn from(s: &str) -> Self {
+        Raw(s.to_string())
+    }
+}
+
+
+impl From<String> for Raw {
+    fn from(s: String) -> Self {
         Raw(s)
     }
 }
 
 /// A raw (unencoded) html string
-impl<'s> Render for Raw<'s> {
+impl Render for Raw {
     fn render_into<W: Write>(self, writer: &mut W) -> Result {
         write!(writer, "{}", self.0)
     }

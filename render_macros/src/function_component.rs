@@ -41,7 +41,7 @@ pub fn create_function_component(f: syn::ItemFn) -> TokenStream {
     };
 
     TokenStream::from(quote! {
-        #[derive(Debug)]
+        #[derive(Debug, Clone)]
         #vis struct #struct_name#impl_generics #inputs_block
 
         impl#impl_generics ::render::Render for #struct_name #ty_generics #where_clause {

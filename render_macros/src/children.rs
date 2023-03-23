@@ -2,7 +2,7 @@ use crate::child::Child;
 use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream, Result};
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Children {
     pub nodes: Vec<Child>,
 }
@@ -30,7 +30,6 @@ impl Children {
             1 => quote! { Some(#(#children_quotes),*) },
             _ => {
                 let mut iter = children_quotes.iter();
-
                 let first = iter.next().unwrap();
                 let second = iter.next().unwrap();
 
