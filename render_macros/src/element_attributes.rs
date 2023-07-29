@@ -131,13 +131,13 @@ impl<'a> ToTokens for SimpleElementAttributes<'a> {
                     let value = attribute.value_tokens();
 
                     quote! {
-                        hm.insert(#ident, ::std::borrow::Cow::from(#value));
+                        hm.insert(#ident, ::render::ToAttribute::from_value(#value));
                     }
                 })
                 .collect();
 
             let hashmap_declaration = quote! {{
-                let mut hm = std::collections::HashMap::<&str, ::std::borrow::Cow<'_, str>>::new();
+                let mut hm = std::collections::HashMap::<&str, Option<::std::borrow::Cow<'_, str>>>::new();
                 #(#attrs)*
                 Some(hm)
             }};
