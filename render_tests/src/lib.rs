@@ -78,6 +78,18 @@ fn element_ordering() {
 }
 
 #[test]
+fn childless_non_selfclosing_tag() {
+    use pretty_assertions::assert_eq;
+    use render::html;
+
+    let actual = html! {
+        <textarea></textarea>
+    };
+
+    assert_eq!(actual, "<textarea></textarea>");
+}
+
+#[test]
 fn some_none() {
     use pretty_assertions::assert_eq;
     use render::{component, html, rsx};
