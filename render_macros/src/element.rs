@@ -8,16 +8,21 @@ pub struct Element {
     name: syn::Path,
     attributes: ElementAttributes,
     children: Children,
+    self_closing: bool,
 }
 
 impl Parse for Element {
     fn parse(input: ParseStream) -> Result<Self> {
         let open_tag = input.parse::<OpenTag>()?;
-
-        let children = if open_tag.self_closing {
+        let self_closing = open_tag.self_closing;
+        let children = if self_closing {
             Children::default()
         } else {
-            let children = input.parse::<Children>()?;
+            let children = if input.peek2(syn::Token![/]) {
+                Children::default()
+            } else {
+                input.parse::<Children>()?
+            };
             let closing_tag = input.parse::<ClosingTag>()?;
             closing_tag.validate(&open_tag);
             children
@@ -27,6 +32,7 @@ impl Parse for Element {
             name: open_tag.name,
             attributes: open_tag.attributes,
             children,
+            self_closing,
         })
     }
 }
@@ -54,11 +60,13 @@ impl ToTokens for Element {
         } else {
             let attrs = self.attributes.for_simple_element();
             let children_tuple = self.children.as_option_of_tuples_tokens();
+            let self_closing = self.self_closing;
             quote! {
                 ::render::SimpleElement {
                     tag_name: stringify!(#name),
                     attributes: #attrs,
                     contents: #children_tuple,
+                    self_closing: #self_closing,
                 }
             }
         };
