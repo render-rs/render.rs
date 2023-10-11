@@ -102,6 +102,8 @@ impl Parse for ElementAttribute {
         }
 
         input.parse::<syn::Token![=]>()?;
+        // TODO: Add support for literals
+        // TODO: Add support for bool expr disable attribute
         let value = input.parse::<syn::Block>()?;
 
         Ok(Self::WithValue(name, value))

@@ -76,8 +76,8 @@ pub struct SimpleElement<'a, T: Render> {
     pub contents: Option<T>,
 }
 
-fn write_attributes<'a, W: Write>(maybe_attributes: Attributes<'a>, writer: &mut W) -> Result {
-    match maybe_attributes {
+fn write_attributes<'a, W: Write>(attributes: Attributes<'a>, writer: &mut W) -> Result {
+    match attributes {
         None => Ok(()),
         Some(mut attributes) => {
             for (key, maybe_value) in attributes.drain() {
